@@ -1,0 +1,1634 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Relació entre teoria i pràctica</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+  tailwind.config = { corePlugins: { preflight: true } };
+</script>
+<style>
+/* Layout: un expedient judicial vertical. Cada bloc és un foli numerat, amb segells, articles del CP i dades en tipografia mono. */
+:root{
+  --paper:#F1EEE6;
+  --sheet:#FBFAF6;
+  --sheet-2:#E6E1D5;
+  --ink:#17150F;
+  --ink-2:#47433A;
+  --ink-3:#6E685B;
+  --rule:#CBC3B1;
+  --red:#BF2418;
+  --red-soft:#F4DCD6;
+  --blue:#1C3A8A;
+  --blue-soft:#DCE3F3;
+  --green:#2A6439;
+  --green-soft:#D9E8D6;
+
+  --f-display:"Archivo","Arial Narrow",Arial,system-ui,sans-serif;
+  --f-body:"Instrument Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+
+  --t-xs:clamp(15px,1vw,19px);
+  --t-sm:clamp(17px,1.25vw,23px);
+  --t-base:clamp(19px,1.5vw,29px);
+  --t-lg:clamp(23px,1.95vw,37px);
+  --t-xl:clamp(30px,2.9vw,54px);
+  --t-2xl:clamp(38px,4.4vw,86px);
+  --t-3xl:clamp(54px,8.2vw,168px);
+
+  --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:light;
+}
+html{background:var(--paper);scroll-behavior:smooth;scroll-snap-type:y proximity}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--t-base);line-height:1.35;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--paper)}
+::selection{background:var(--red);color:var(--sheet)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+button{cursor:pointer}
+[hidden]{display:none!important}
+
+/* ---------- Slides ---------- */
+.slide{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;scroll-snap-align:start;
+  padding-block:7vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  border-top:1px solid var(--rule)}
+@media (min-width:900px){.slide{padding-left:calc(118px + 1.5vw);padding-right:max(4vw,env(safe-area-inset-right,0px))}}
+.slide-inner{width:100%;max-width:1560px;min-width:0}
+.folio{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);border-bottom:2px solid var(--ink);padding-bottom:.55em;margin-bottom:clamp(18px,3.4vh,44px)}
+.folio b{color:var(--ink);font-weight:600}
+.h-title{font-family:var(--f-display);font-weight:850;font-stretch:112%;font-size:var(--t-2xl);line-height:.96;letter-spacing:-.022em;text-wrap:balance;margin:0}
+.h-title em{font-style:normal;color:var(--red)}
+.lede{font-size:var(--t-lg);color:var(--ink-2);max-width:40ch;text-wrap:pretty;line-height:1.28}
+.label{font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+.mono{font-family:var(--f-mono)}
+.num{font-variant-numeric:tabular-nums}
+.cite{font-family:var(--f-mono);font-size:var(--t-xs);color:var(--ink-3);letter-spacing:.02em}
+.ref-chip{display:inline-block;font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.04em;border:1.5px solid currentColor;padding:.12em .5em;white-space:nowrap}
+
+/* ---------- Components ---------- */
+.sheet{background:var(--sheet);border:1.5px solid var(--ink);padding:clamp(18px,1.7vw,34px);min-width:0}
+.sheet-soft{background:var(--sheet);border:1.5px solid var(--rule);padding:clamp(16px,1.5vw,30px);min-width:0}
+.btn{font-family:var(--f-mono);font-size:var(--t-sm);letter-spacing:.06em;text-transform:uppercase;font-weight:500;border:2px solid var(--ink);background:var(--sheet);color:var(--ink);padding:.55em 1em;box-shadow:4px 4px 0 var(--ink);transition:all .3s var(--ease);display:inline-flex;align-items:center;gap:.5em;line-height:1.1;text-align:left}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn[aria-pressed="true"],.btn.is-on{background:var(--ink);color:var(--sheet)}
+.btn-red{border-color:var(--red);color:var(--red);box-shadow:4px 4px 0 var(--red)}
+.btn-red:hover{box-shadow:6px 6px 0 var(--red)}
+.btn-red[aria-pressed="true"],.btn-red.is-on{background:var(--red);color:var(--sheet)}
+.btn-ghost{box-shadow:none;border-width:1.5px;font-size:var(--t-xs);padding:.45em .8em}
+.btn-ghost:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--sheet)}
+.chip{font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);padding:.3em .7em;background:transparent;color:var(--ink);transition:all .3s var(--ease)}
+.chip:hover{background:var(--sheet-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;padding:.15em .55em;font-weight:500}
+.tag-red{background:var(--red-soft);color:var(--red)}
+.tag-blue{background:var(--blue-soft);color:var(--blue)}
+.tag-green{background:var(--green-soft);color:var(--green)}
+.tag-ink{background:var(--ink);color:var(--sheet)}
+
+/* answers revealed on click */
+.answer{animation:rise .5s var(--ease)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* progressive steps */
+.step{transition:opacity .55s var(--ease),filter .55s var(--ease),transform .55s var(--ease)}
+body:not(.show-all) .step:not(.on){opacity:.13;filter:blur(7px) grayscale(1);transform:translateY(14px);cursor:pointer;user-select:none}
+body:not(.show-all) .step:not(.on) *{pointer-events:none}
+
+/* stamp */
+.stamp{display:inline-block;font-family:var(--f-display);font-weight:900;font-stretch:118%;text-transform:uppercase;color:var(--red);border:5px solid var(--red);outline:2px solid var(--red);outline-offset:5px;padding:.15em .55em;line-height:1;letter-spacing:.01em;transform:rotate(-5deg);opacity:.92}
+.step.on .stamp,.show-all .stamp{animation:stampin .45s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes stampin{0%{transform:rotate(-5deg) scale(1.9);opacity:0}100%{transform:rotate(-5deg) scale(1);opacity:.92}}
+
+/* flip cards */
+.flip{perspective:1400px;background:none;border:0;padding:0;text-align:left;min-height:clamp(250px,32vh,380px);width:100%;color:inherit}
+.flip-inner{position:relative;width:100%;height:100%;min-height:inherit;transform-style:preserve-3d;transition:transform .7s var(--ease)}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid var(--ink);padding:clamp(16px,1.5vw,28px);display:flex;flex-direction:column;gap:.6em;overflow:auto}
+.flip-front{background:var(--sheet)}
+.flip-back{background:var(--ink);color:var(--sheet);transform:rotateY(180deg)}
+.flip-back .cite{color:#C9C2B2}
+.flip .hint{margin-top:auto;font-family:var(--f-mono);font-size:var(--t-xs);color:var(--ink-3);letter-spacing:.06em}
+
+/* tabs */
+.tablist{display:flex;flex-wrap:wrap;gap:.6rem}
+.tab{font-family:var(--f-mono);font-size:var(--t-sm);border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:.45em .9em;transition:all .3s var(--ease);text-align:left}
+.tab:hover{background:var(--sheet-2)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--sheet)}
+
+/* ---------- Navigation ---------- */
+#nav{position:fixed;left:max(18px,env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);z-index:50;display:none}
+@media (min-width:900px){#nav{display:flex}}
+#nav .track{position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+#nav .fill{position:absolute;left:0;top:0;width:100%;background:var(--red);height:0;transition:height .15s linear}
+#nav ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(6px,1.25vh,14px);position:relative}
+.nav-item{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-family:var(--f-mono);font-size:14px;letter-spacing:.06em}
+.nav-dot{width:24px;height:24px;display:grid;place-items:center;flex:none}
+.nav-dot::before{content:"";width:9px;height:9px;background:var(--paper);border:2px solid var(--ink-3);transition:all .3s var(--ease)}
+.nav-item.done .nav-dot::before{background:var(--ink-3);border-color:var(--ink-3)}
+.nav-item.active .nav-dot::before{width:16px;height:16px;background:var(--red);border-color:var(--red);transform:rotate(45deg)}
+.nav-label{opacity:0;transform:translateX(-6px);transition:all .3s var(--ease);background:var(--ink);color:var(--sheet);padding:3px 9px;white-space:nowrap;pointer-events:none}
+.nav-num{width:22px;color:var(--ink-3);font-size:12px;text-align:right;display:none}
+#nav:hover .nav-label,.nav-item:focus-visible .nav-label{opacity:1;transform:none}
+.nav-item.active .nav-label{opacity:1;transform:none;background:var(--red)}
+#nav:not(:hover) .nav-item.active .nav-label{opacity:0}
+#topbar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:5px;z-index:55;background:var(--sheet-2)}
+#topbar span{display:block;height:100%;width:0;background:var(--red);transition:width .15s linear}
+@media (min-width:900px){#topbar{display:none}}
+
+/* dock */
+#dock{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:56;display:flex;gap:6px;align-items:center;opacity:.35;transition:opacity .3s}
+#dock:hover,#dock:focus-within{opacity:1}
+#dock button{font-family:var(--f-mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--ink);background:var(--sheet);color:var(--ink);padding:6px 10px;transition:all .3s}
+#dock button:hover,#dock button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+#stepcount{font-family:var(--f-mono);font-size:13px;color:var(--ink-3);padding:0 6px;white-space:nowrap}
+@media (max-width:640px){#dock .hide-sm{display:none}}
+
+/* notes panel */
+#notes{position:fixed;top:0;right:0;bottom:0;width:min(600px,42vw);z-index:70;background:var(--ink);color:#EDE8DC;transform:translateX(102%);transition:transform .4s var(--ease);overflow:auto;padding:max(28px,env(safe-area-inset-top,0px)) max(28px,env(safe-area-inset-right,0px)) 40px 28px;font-size:17px;line-height:1.5;border-left:6px solid var(--red)}
+#notes.open{transform:none}
+@media (max-width:900px){#notes{width:100%}}
+#notes h3{font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:26px;margin:.2em 0 .6em;color:#fff}
+#notes h4{font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#E8897F;margin:1.4em 0 .4em}
+#notes p,#notes li{margin:.35em 0}
+#notes ul{padding-left:1.1em;list-style:square}
+#notes .warn{border-left:3px solid #E8897F;padding:.4em .8em;background:rgba(255,255,255,.05);margin:.8em 0}
+#notes .top{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#B8B09E}
+#notes .top button{border:1.5px solid #B8B09E;color:#EDE8DC;background:transparent;padding:4px 10px;font-family:var(--f-mono)}
+#notes em{color:#fff}
+.tnote{display:none}
+
+/* help overlay */
+#help{position:fixed;inset:0;z-index:80;background:rgba(23,21,15,.72);display:grid;place-items:center;padding:16px}
+#help .box{background:var(--sheet);border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:28px 32px;max-width:640px;width:100%;font-size:18px}
+#help kbd{font-family:var(--f-mono);font-size:15px;border:1.5px solid var(--ink);padding:1px 7px;background:var(--paper);white-space:nowrap}
+#help table{width:100%;border-collapse:collapse}
+#help td{padding:7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+#help td:first-child{width:46%}
+
+/* mini timer */
+#mini-timer{position:fixed;top:max(14px,env(safe-area-inset-top,0px));right:max(14px,env(safe-area-inset-right,0px));z-index:57;font-family:var(--f-mono);font-size:22px;background:var(--ink);color:var(--sheet);padding:6px 14px;border:0;font-variant-numeric:tabular-nums}
+#mini-timer.urgent{background:var(--red)}
+
+/* ---------- Portada ---------- */
+.cover-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(24px,5vw,96px);align-items:end}
+@media (max-width:1000px){.cover-grid{grid-template-columns:1fr}}
+.cover-title{font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(48px,6.4vw,132px);line-height:.92;letter-spacing:-.03em;margin:0;text-wrap:balance}
+.cover-q{font-size:var(--t-lg);line-height:1.22;font-weight:500;max-width:42ch;border-left:6px solid var(--red);padding-left:.8em;margin:0;text-wrap:pretty}
+.cover-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;border-top:2px solid var(--ink);padding-top:1em;font-size:var(--t-sm);line-height:1.3;margin:0}
+.cover-meta dd{margin:.3em 0 0}
+@media (max-width:800px){.cover-meta{grid-template-columns:1fr}}
+.agenda ol{list-style:none;padding:0;margin:.7em 0 0;border-top:2px solid var(--ink)}
+.agenda a{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;gap:.8em;align-items:baseline;padding:.75em 0;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink);transition:all .3s var(--ease)}
+.agenda a:hover{padding-left:.4em;color:var(--red)}
+.ag-n{font-family:var(--f-display);font-weight:900;font-size:var(--t-lg);color:var(--red);line-height:1}
+.agenda b{display:block;font-family:var(--f-display);font-weight:800;font-stretch:108%;font-size:var(--t-lg);line-height:1}
+.agenda small{display:block;font-size:var(--t-xs);color:var(--ink-3);margin-top:.25em;line-height:1.3}
+.ag-f{font-family:var(--f-mono);font-size:var(--t-xs);color:var(--ink-3)}
+
+/* ---------- Cas ---------- */
+.verdict-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:clamp(14px,1.6vw,30px)}
+@media (max-width:1100px){.verdict-grid{grid-template-columns:1fr}}
+.range{width:100%;-webkit-appearance:none;appearance:none;height:8px;margin:10px 0;background:linear-gradient(to right,var(--ink) var(--p,15%),var(--sheet-2) var(--p,15%));border:1.5px solid var(--ink);outline-offset:6px}
+.range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--red);border:2.5px solid var(--ink);border-radius:0;transform:rotate(45deg);cursor:grab}
+.range::-moz-range-thumb{width:18px;height:18px;background:var(--red);border:2.5px solid var(--ink);border-radius:0;cursor:grab}
+.price-display{font-family:var(--f-display);font-weight:900;font-stretch:110%;font-size:clamp(56px,6.5vw,128px);line-height:.9;letter-spacing:-.03em}
+.limit-line{position:relative;height:28px;margin-top:6px}
+.limit-line span{position:absolute;transform:translateX(-50%);font-family:var(--f-mono);font-size:var(--t-xs);color:var(--red);white-space:nowrap}
+.penalty{font-family:var(--f-display);font-weight:850;font-stretch:108%;font-size:var(--t-xl);line-height:1;letter-spacing:-.015em;transition:color .3s}
+.months{position:relative;height:30px;background:repeating-linear-gradient(to right,var(--sheet-2) 0 calc(100%/36 - 2px),var(--paper) calc(100%/36 - 2px) calc(100%/36));border:1.5px solid var(--ink);margin-top:.4em}
+.months .bar{position:absolute;top:0;bottom:0;background:var(--red);transition:all .6s var(--ease)}
+.months-scale{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:var(--t-xs);color:var(--ink-3);margin-top:4px}
+.tally{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tally button{border:2px solid var(--ink);background:var(--sheet);padding:.5em .7em;text-align:left;transition:all .3s var(--ease);position:relative;overflow:hidden;color:var(--ink)}
+.tally button .fillv{position:absolute;left:0;bottom:0;top:0;background:var(--sheet-2);width:0;transition:width .4s var(--ease);z-index:0}
+.tally button > *:not(.fillv){position:relative;z-index:1}
+.tally button:hover{background:var(--paper)}
+.tally .count{font-family:var(--f-display);font-weight:900;font-size:var(--t-xl);line-height:1}
+
+/* ---------- Suspensió ---------- */
+.bubble{position:relative;background:var(--ink);color:var(--sheet);padding:clamp(18px,2vw,36px);font-size:var(--t-lg);line-height:1.25;max-width:34ch}
+.bubble::after{content:"";position:absolute;left:44px;bottom:-26px;border:14px solid transparent;border-top-color:var(--ink);border-left-color:var(--ink)}
+.effect-num{font-family:var(--f-display);font-weight:900;font-size:var(--t-2xl);color:var(--red);line-height:.8}
+
+/* ---------- Palanques ---------- */
+.formula{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.15em .32em;font-family:"STIX Two Text",Georgia,"Times New Roman",serif;font-size:clamp(32px,3.7vw,72px);line-height:1.1;padding:.45em .8em .5em;background:var(--sheet);border:1.5px solid var(--ink);width:fit-content;max-width:100%}
+.formula var{font-style:italic;display:block;transition:color .4s var(--ease)}
+.fx-term{display:flex;flex-direction:column;align-items:center}
+.fx-term small{font-family:var(--f-mono);font-style:normal;font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:.4em;border-top:2px solid var(--rule);padding-top:.3em;white-space:nowrap;transition:all .4s var(--ease)}
+.fx-op{font-style:normal;padding:0 .08em}
+.fx-paren{display:inline-block;transform:scaleY(1.3);transform-origin:50% 45%;font-weight:400;color:var(--ink-2)}
+.fx-term.hl var{color:var(--red)}
+.fx-term.hl small{color:var(--red);border-color:var(--red)}
+.fx-note{font-family:"STIX Two Text",Georgia,serif;font-size:var(--t-base);font-style:italic;color:var(--ink-2);margin:0}
+.levers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,40px)}
+.lever{display:grid;grid-template-rows:auto clamp(160px,26vh,300px) auto;gap:12px;min-width:0}
+.lever .well{position:relative;border:2px solid var(--ink);background:repeating-linear-gradient(to top,var(--sheet) 0 19px,var(--sheet-2) 19px 20px)}
+.lever .lvl{position:absolute;left:0;right:0;bottom:0;height:var(--h,30%);background:var(--ink);transition:height .8s var(--ease),background .4s}
+.lever .lvl::after{content:"";position:absolute;left:50%;top:-18px;width:36px;height:36px;margin-left:-18px;background:var(--sheet);border:3px solid var(--ink);transform:rotate(45deg)}
+.lever.hot .lvl{background:var(--red)}
+.lever.hot .lvl::after{border-color:var(--red)}
+.lever-name{font-family:var(--f-display);font-weight:850;font-stretch:110%;font-size:var(--t-xl);line-height:1}
+.lever-txt{font-size:var(--t-sm);color:var(--ink-2);min-height:4.2em;line-height:1.3}
+
+/* ---------- Compare ---------- */
+.versus{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:clamp(12px,2vw,36px);align-items:stretch}
+@media (max-width:900px){.versus{grid-template-columns:1fr}.versus .vs{justify-self:center}}
+.vs{font-family:var(--f-display);font-weight:900;font-size:var(--t-xl);align-self:center;color:var(--red)}
+.side-h{font-family:var(--f-display);font-weight:850;font-stretch:110%;font-size:var(--t-xl);line-height:1;margin:0 0 .3em}
+.predict{border-top:2px solid var(--ink);margin-top:auto;padding-top:.6em;display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap}
+.arrow-big{font-family:var(--f-display);font-weight:900;font-size:var(--t-2xl);line-height:.8}
+
+/* ---------- Roles ---------- */
+.role{border:2px solid var(--ink);background:var(--sheet);display:flex;flex-direction:column;min-width:0}
+.role-head{padding:.6em .9em;display:flex;justify-content:space-between;align-items:baseline;gap:1em}
+.role-A .role-head{background:var(--ink);color:var(--sheet)}
+.role-B .role-head{background:var(--blue);color:var(--sheet)}
+.role-letter{font-family:var(--f-display);font-weight:900;font-size:var(--t-2xl);line-height:.8}
+.role-body{padding:clamp(16px,1.5vw,28px);display:flex;flex-direction:column;gap:.7em;flex:1}
+.role ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.45em}
+.role li{display:flex;gap:.6em;align-items:flex-start;font-size:var(--t-base);line-height:1.25}
+.role li::before{content:"";flex:none;width:.55em;height:.55em;margin-top:.38em;background:currentColor;transform:rotate(45deg)}
+.timer{font-family:var(--f-display);font-weight:900;font-stretch:100%;font-size:clamp(64px,8vw,150px);line-height:.9;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.timer.urgent{color:var(--red)}
+
+/* ---------- Debate cards ---------- */
+.arg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));gap:clamp(12px,1.4vw,24px)}
+.arg{display:flex;flex-direction:column;gap:.55em;transition:all .3s var(--ease)}
+.arg[hidden]{display:none}
+.arg h3{font-family:var(--f-display);font-weight:850;font-stretch:108%;font-size:var(--t-lg);line-height:1.05;margin:0}
+.arg p{margin:0;font-size:var(--t-sm);line-height:1.32;color:var(--ink-2)}
+.counter{border-left:5px solid var(--red);background:var(--red-soft);padding:.6em .8em;font-size:var(--t-sm);line-height:1.3}
+.socratic{display:flex;gap:1em;align-items:center;flex-wrap:wrap;border:2px dashed var(--ink);padding:.7em 1em}
+.socratic q{font-size:var(--t-lg);font-weight:600;quotes:"«" "»";flex:1;min-width:min(100%,320px)}
+
+/* ---------- Flow ---------- */
+.flow{display:grid;grid-template-columns:repeat(7,auto);align-items:center;gap:clamp(6px,1vw,16px);overflow-x:auto;padding:8px 6px 14px}
+.flow-node{border:2px solid var(--ink);background:var(--sheet);padding:.6em .9em;text-align:left;transition:all .3s var(--ease);min-width:clamp(150px,14vw,250px);color:var(--ink)}
+.flow-node .n{font-family:var(--f-mono);font-size:var(--t-xs);color:var(--ink-3)}
+.flow-node .t{font-family:var(--f-display);font-weight:850;font-stretch:108%;font-size:var(--t-lg);line-height:1;display:block}
+.flow-node:hover{background:var(--sheet-2)}
+.flow-node[aria-selected="true"]{background:var(--ink);color:var(--sheet);transform:translateY(-4px);box-shadow:0 6px 0 var(--red)}
+.flow-node[aria-selected="true"] .n{color:#C9C2B2}
+.flow-arrow{width:clamp(24px,3vw,60px);height:18px;flex:none}
+@media (max-width:900px){.flow{grid-template-columns:1fr;justify-items:stretch}.flow-arrow{transform:rotate(90deg);justify-self:center}}
+.lever-badge{font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--sheet);background:var(--blue);padding:.2em .6em}
+
+/* ---------- Figures ---------- */
+.bars{display:flex;flex-direction:column;gap:clamp(10px,1.6vh,20px)}
+.bar-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) auto;gap:1em;align-items:center}
+@media (max-width:700px){.bar-row{grid-template-columns:1fr auto}.bar-row .track{grid-column:1 / -1;order:3}}
+.bar-row .track{height:clamp(26px,3.6vh,42px);background:var(--sheet-2);position:relative;border:1.5px solid var(--ink)}
+.bar-row .val{position:absolute;inset:0 auto 0 0;width:0;background:var(--ink);transition:width 1.1s var(--ease)}
+.bar-row.is-red .val{background:var(--red)}
+.bar-row .pct{font-family:var(--f-display);font-weight:900;font-size:var(--t-xl);line-height:1;font-variant-numeric:tabular-nums;min-width:3.6ch;text-align:right}
+.bar-row.is-blue .val{background:var(--blue);transition:width .2s linear}
+.bar-row.is-blue .pct{color:var(--blue)}
+.bar-row.is-blue{padding-bottom:clamp(8px,1.4vh,16px);border-bottom:1.5px dashed var(--rule)}
+.dotplot{position:relative}
+.dp-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,2.2fr);gap:1em;align-items:center;padding:.35em 0;border-bottom:1px solid var(--rule)}
+@media (max-width:800px){.dp-row{grid-template-columns:1fr}}
+.dp-name{font-size:var(--t-sm);line-height:1.15}
+.dp-name b{font-family:var(--f-display);font-weight:800;font-stretch:105%}
+.dp-track{position:relative;height:clamp(34px,4.6vh,48px)}
+.dp-zero{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--ink)}
+.dp-grid{position:absolute;top:0;bottom:0;width:1px;background:var(--rule)}
+.dp-left{position:absolute;top:0;bottom:0;left:0;background:repeating-linear-gradient(45deg,transparent 0 9px,rgba(42,100,57,.10) 9px 11px)}
+.dp-dot{position:absolute;top:50%;width:clamp(22px,2vw,32px);height:clamp(22px,2vw,32px);margin:calc(clamp(22px,2vw,32px) / -2) 0 0 calc(clamp(22px,2vw,32px) / -2);background:var(--red);border:3px solid var(--ink);transform:rotate(45deg) scale(0);transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
+.dp-row.on .dp-dot,.show-all .dp-dot{transform:rotate(45deg) scale(1)}
+.dp-row .dp-val{position:absolute;top:50%;transform:translate(16px,-50%);font-family:var(--f-display);font-weight:900;font-size:var(--t-lg);white-space:nowrap;font-variant-numeric:tabular-nums}
+.dp-axis{position:relative;height:1.6em;font-family:var(--f-mono);font-size:var(--t-xs);color:var(--ink-3)}
+.dp-axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.cells{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;max-width:460px}
+.cell{aspect-ratio:1;border:2px solid var(--ink);background:var(--sheet);transition:background .4s var(--ease) var(--d,0s)}
+.cells.lit .cell.g{background:var(--green)}
+.cells.lit .cell.r{background:var(--red)}
+.cells.lit .cell.n{background:var(--sheet-2)}
+.legend{display:flex;gap:1.2em;flex-wrap:wrap;font-size:var(--t-sm)}
+.legend i{display:inline-block;width:.9em;height:.9em;border:2px solid var(--ink);vertical-align:-.1em;margin-right:.35em}
+
+/* hospital */
+.swap{transition:all .45s var(--ease);padding:0 .12em;border-bottom:3px solid var(--blue);color:var(--blue);font-weight:600}
+.prison-mode .swap{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.hosp-text{font-size:var(--t-lg);line-height:1.42;max-width:52ch;text-wrap:pretty}
+
+/* conclusions */
+.conf{display:flex;gap:5px}
+.conf i{width:clamp(26px,2.4vw,44px);height:12px;border:2px solid var(--ink);background:transparent}
+.conf i.f{background:var(--ink)}
+.quote-final{font-family:var(--f-display);font-weight:850;font-stretch:108%;font-size:clamp(30px,3.4vw,68px);line-height:1.02;letter-spacing:-.018em;text-wrap:balance;margin:0}
+details.refs summary{cursor:pointer;font-family:var(--f-mono);font-size:var(--t-sm);text-transform:uppercase;letter-spacing:.08em}
+details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-left:1.6em;text-indent:-1.6em}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar" aria-hidden="true"><span></span></div>
+
+<nav id="nav" aria-label="Blocs de la presentació">
+  <div class="track"><div class="fill"></div></div>
+  <ol id="nav-list"></ol>
+</nav>
+
+<div id="dock" role="toolbar" aria-label="Controls de la presentació">
+  <span id="stepcount" aria-live="polite"></span>
+  <button type="button" id="btn-prev" title="Bloc anterior (↑ o RePàg)">↑</button>
+  <button type="button" id="btn-next" title="Pas següent (↓, AvPàg o espai)">↓ Següent</button>
+  <button type="button" id="btn-all" class="hide-sm" aria-pressed="false" title="Mostra tot el contingut (A)">Tot</button>
+  <button type="button" id="btn-notes" class="hide-sm" aria-pressed="false" title="Notes docents (N)">Notes</button>
+  <button type="button" id="btn-fs" class="hide-sm" title="Pantalla completa (F)">⤢</button>
+  <button type="button" id="btn-help" title="Dreceres de teclat (?)">?</button>
+</div>
+
+<button type="button" id="mini-timer" hidden title="Torna a la pantalla dels rols"></button>
+
+<aside id="notes" aria-label="Notes docents" aria-hidden="true">
+  <div class="top"><span id="notes-folio">Notes docents</span><button type="button" id="notes-close">Tanca · N</button></div>
+  <div id="notes-body"></div>
+</aside>
+
+<div id="help" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="help-t">
+    <h2 id="help-t" class="h-title" style="font-size:34px;margin-bottom:14px">Dreceres</h2>
+    <table>
+      <tr><td><kbd>↓</kbd> <kbd>AvPàg</kbd> <kbd>Espai</kbd></td><td>Revela el pas següent; quan s'acaben, passa al bloc següent. Funciona amb el comandament de diapositives.</td></tr>
+      <tr><td><kbd>↑</kbd> <kbd>RePàg</kbd></td><td>Torna al bloc anterior</td></tr>
+      <tr><td><kbd>Inici</kbd> <kbd>Fi</kbd></td><td>Primer o últim bloc</td></tr>
+      <tr><td><kbd>N</kbd></td><td>Obre o tanca les notes docents</td></tr>
+      <tr><td><kbd>A</kbd></td><td>Mostra o amaga tot el contingut d'un cop</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Pantalla completa</td></tr>
+      <tr><td><kbd>T</kbd></td><td>Inicia o atura el cronòmetre dels rols</td></tr>
+      <tr><td>Clic en un element difuminat</td><td>El revela directament</td></tr>
+    </table>
+    <p style="margin-top:16px;text-align:right"><button type="button" class="btn" id="help-close">Entesos</button></p>
+  </div>
+</div>
+
+<main>
+
+<!-- ============ 01 PORTADA ============ -->
+<section class="slide" id="inici" data-title="Inici" data-cat="Plantejament">
+  <div class="slide-inner">
+    <div class="folio"><span><b>Criminologia</b> · Bloc III · Tema 9</span><span class="num">10.11.2026</span></div>
+    <div class="cover-grid">
+      <div class="flex flex-col gap-7">
+        <span class="label" style="color:var(--red)">Seminari temàtic 5</span>
+        <h1 class="cover-title">Relació entre teoria i&nbsp;pràctica</h1>
+        <p class="cover-q">Per què el legislador espanyol confia en l'augment de les penes per prevenir el delicte, si la criminologia indica que no és una estratègia efectiva?</p>
+        <dl class="cover-meta">
+          <div><dt class="label">Cas d'estudi</dt><dd>Reforma del Codi Penal de 8 d'abril de 2026: furt de telèfons mòbils</dd></div>
+          <div><dt class="label">Lectura</dt><dd>Cullen, Jonson i Nagin (2011), <i>The Prison Journal</i>, 91(3), 48S–65S</dd></div>
+          <div><dt class="label">Marc teòric</dt><dd>Cid i Larrauri (2023), ep. 4.2 · Wilson i Kelling (1982)</dd></div>
+        </dl>
+      </div>
+      <nav class="agenda" aria-label="Estructura de la sessió">
+        <span class="label">Estructura de la sessió</span>
+        <ol>
+          <li><a href="#cas" data-goto="cas"><span class="ag-n">I</span><span><b>Plantejament</b><small>El supòsit de fet i la qüestió jurídica</small></span><span class="ag-f">02–03</span></a></li>
+          <li><a href="#paradoxa" data-goto="paradoxa"><span class="ag-n">II</span><span><b>Teoria</b><small>Dissuasió i experiència social de la presó</small></span><span class="ag-f">04–06</span></a></li>
+          <li><a href="#rols" data-goto="rols"><span class="ag-n">III</span><span><b>Debat</b><small>Arguments del legislador i alternatives</small></span><span class="ag-f">07–09</span></a></li>
+          <li><a href="#xifres" data-goto="xifres"><span class="ag-n">IV</span><span><b>Evidència</b><small>Estudis i revisions sistemàtiques</small></span><span class="ag-f">10–12</span></a></li>
+          <li><a href="#hospital" data-goto="hospital"><span class="ag-n">V</span><span><b>Síntesi</b><small>Cas pràctic i conclusions</small></span><span class="ag-f">13–15</span></a></li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Obertura</h3>
+    <p>Pregunta guia del seminari, literal de la guia docent. Marc: Bloc III, Tema 9. Connecta amb Cid i Larrauri (2023, epígraf 4.2, pp. 29–31 i nota 10) i amb Wilson i Kelling (1982).</p>
+    <h4>Metàfora clau de la lectura</h4>
+    <p>«Price tag» (p. 52S): els partidaris de la dissuasió volen reduir el càstig a «una simple etiqueta de preu». Reapareix al foli 05.</p>
+    <h4>Referència</h4>
+    <p>Cullen, F. T., Jonson, C. L. i Nagin, D. S. (2011). Prisons do not reduce recidivism: The high cost of ignoring science. <em>The Prison Journal, 91</em>(3 supl.), 48S–65S.</p>
+    <div class="warn">El DOI de la guia està truncat. El correcte és <em>10.1177/0032885511415224</em>.</div>
+    <h4>Tesi de l'article en una frase</h4>
+    <p>«Prisons do not reduce recidivism more than noncustodial sanctions» (p. 50S): la presó no redueix la reincidència més que les sancions no privatives de llibertat, i pot ser criminògena.</p>
+  </div>
+</section>
+
+<!-- ============ 02 EL CAS ============ -->
+<section class="slide" id="cas" data-title="El cas" data-cat="Plantejament">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 02</b> · El cas</span><span>Reforma del Codi Penal · 8 d'abril de 2026</span></div>
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <h2 class="h-title" style="max-width:15ch">El supòsit <em>de fet</em></h2>
+      <div class="flex flex-wrap gap-3 step" data-step="1">
+        <span class="tag tag-ink">Sense força a les coses</span>
+        <span class="tag tag-ink">Sense violència ni intimidació</span>
+        <span class="tag tag-ink">Un mòbil de segona mà</span>
+      </div>
+    </div>
+
+    <div class="verdict-grid">
+      <div class="sheet flex flex-col gap-4 step" data-step="2">
+        <label for="valor" class="label">Valor del mòbil furtat</label>
+        <div class="price-display num" id="valor-out">250 €</div>
+        <div>
+          <input id="valor" class="range" type="range" min="50" max="1500" step="10" value="250" aria-describedby="valor-limit">
+          <div class="limit-line" id="valor-limit"><span style="left:24.1%">▲ llindar 400 €</span></div>
+        </div>
+        <p class="cite">Fins al 7 d'abril, el valor determinava la pena. Des del 8 d'abril, és irrellevant.</p>
+      </div>
+
+      <div class="sheet flex flex-col gap-3 step" data-step="3">
+        <div class="flex justify-between items-baseline gap-2 flex-wrap"><span class="label">Fins al 7-4-2026</span><span class="ref-chip" id="before-art">Art. 234.2 CP</span></div>
+        <div class="text-[length:var(--t-lg)] font-semibold" id="before-type">Delicte lleu de furt</div>
+        <div class="penalty" id="before-pen">Multa d'1 a 3 mesos</div>
+        <div><span class="tag tag-green" id="before-nat">Sanció pecuniària</span></div>
+        <div class="mt-auto">
+          <div class="months" aria-hidden="true"><div class="bar" id="before-bar" style="left:0;width:0"></div></div>
+          <div class="months-scale"><span>0</span><span>12</span><span>24</span><span>36 mesos de presó</span></div>
+          <p class="cite mt-2" id="before-min">Pena mínima de presó: 0 dies</p>
+        </div>
+      </div>
+
+      <div class="sheet flex flex-col gap-3 step" data-step="4" style="border-color:var(--red);box-shadow:6px 6px 0 var(--red)">
+        <div class="flex justify-between items-baseline gap-2 flex-wrap"><span class="label" style="color:var(--red)">Des del 8-4-2026</span><span class="ref-chip" style="color:var(--red)">CP reformat</span></div>
+        <div class="text-[length:var(--t-lg)] font-semibold">Furt de telèfon mòbil</div>
+        <div class="penalty" style="color:var(--red)">Presó d'1 a 3 anys</div>
+        <div><span class="tag tag-red">Privació de llibertat · sigui quin sigui el valor</span></div>
+        <div class="mt-auto">
+          <div class="months" aria-hidden="true"><div class="bar" style="left:33.333%;width:66.667%"></div></div>
+          <div class="months-scale"><span>0</span><span>12</span><span>24</span><span>36 mesos de presó</span></div>
+          <p class="cite mt-2">Pena mínima de presó: 365 dies</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-soft step" data-step="5">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <p class="text-[length:var(--t-lg)] font-semibold" style="margin:0">Amb aquesta reforma, hi haurà menys furts de mòbils?</p>
+        <span class="label">Votació a mà alçada</span>
+      </div>
+      <div class="tally" id="tally">
+        <button type="button" data-v="si"><span class="fillv"></span><span class="label">Sí</span><span class="count num">0</span></button>
+        <button type="button" data-v="no"><span class="fillv"></span><span class="label">No</span><span class="count num">0</span></button>
+        <button type="button" data-v="dep"><span class="fillv"></span><span class="label">Depèn</span><span class="count num">0</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>El supòsit de fet</h3>
+    <ul>
+      <li><em>Art. 234.1 CP</em>: furt de més de 400 € → presó de 6 a 18 mesos.</li>
+      <li><em>Art. 234.2 CP</em>: furt de 400 € o menys → delicte lleu, multa d'1 a 3 mesos (llevat que hi concorri alguna circumstància de l'art. 235).</li>
+      <li><em>Reforma del 8-4-2026</em> (segons la guia del seminari): el furt d'un telèfon mòbil passa a 1–3 anys de presó, sigui quin sigui el valor.</li>
+    </ul>
+    <h4>Dinàmica</h4>
+    <p>Feu la votació abans de cap explicació teòrica i deixeu el resultat a la vista: hi tornareu al foli 15.</p>
+    <h4>Pregunta socràtica</h4>
+    <p>«Qui creieu que furta mòbils? Coneix el Codi Penal? Sap si la pena és d'un mes de multa o d'un any de presó?» Prepara el terreny per a la idea de certesa (foli 04).</p>
+  </div>
+</section>
+
+<!-- ============ 03 SUSPENSIÓ ============ -->
+<section class="slide" id="suspensio" data-title="La suspensió" data-cat="Plantejament">
+  <div class="slide-inner flex flex-col gap-7">
+    <div class="folio"><span><b>Foli 03</b> · Qüestió jurídica</span><span>Arts. 80, 86, 22.8 i 136 CP</span></div>
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] items-start">
+      <div class="flex flex-col gap-10">
+        <div class="sheet flex flex-col gap-3" style="border-width:2px">
+          <span class="label">Qüestió</span>
+          <p style="margin:0;font-size:var(--t-xl);font-weight:600;line-height:1.15;text-wrap:balance">Si el condemnat és delinqüent primari i la pena imposada no supera els dos anys, la suspensió de l'art.&nbsp;80 CP evita l'ingrés a presó?</p>
+        </div>
+        <div class="flex flex-col gap-4" data-choice-group="susp">
+          <p class="label">Resposta</p>
+          <div class="flex flex-wrap gap-4">
+            <button type="button" class="btn" data-choice="si">Sí, en tots els casos</button>
+            <button type="button" class="btn" data-choice="part">Només en part</button>
+            <button type="button" class="btn" data-choice="no">No</button>
+          </div>
+        </div>
+      </div>
+      <div id="susp-answer" hidden class="answer flex flex-col gap-4">
+        <p class="h-title" style="font-size:var(--t-xl)"><em>En part.</em> És cert per al delinqüent primari amb una pena de fins a dos anys, però la reforma produeix tres efectes:</p>
+        <div class="sheet grid grid-cols-[auto_minmax(0,1fr)] gap-4 items-start">
+          <span class="effect-num">1</span>
+          <div><strong>La forquilla arriba als 3 anys.</strong> Amb una agreujant, la pena va a la meitat superior (2–3 anys) i ja no hi ha suspensió ordinària, ni per a un primari.</div>
+        </div>
+        <div class="sheet grid grid-cols-[auto_minmax(0,1fr)] gap-4 items-start">
+          <span class="effect-num">2</span>
+          <div><strong>La suspensió és condicional.</strong> Un segon furt durant el termini la revoca (art. 86): compleix la primera pena i la nova. En el furt de carrer, la multireincidència és molt alta.</div>
+        </div>
+        <div class="sheet grid grid-cols-[auto_minmax(0,1fr)] gap-4 items-start">
+          <span class="effect-num">3</span>
+          <div><strong>L'antecedent canvia de naturalesa.</strong> El delicte lleu no computa per a la reincidència i es cancel·la als 6 mesos. Un delicte menys greu deixa antecedents durant 2 a 5 anys.</div>
+        </div>
+        <p class="cite">El tercer efecte enllaça amb l'experiment natural de Chiricos et al. (2007), al foli 10.</p>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Matís jurídic</h3>
+    <ul>
+      <li><em>Art. 80.1 CP</em>: suspensió de penes no superiors a 2 anys.</li>
+      <li><em>Art. 80.2.1a</em>: cal haver delinquit per primer cop; no es tenen en compte les condemnes anteriors per delictes lleus ni imprudents.</li>
+      <li><em>Art. 66.1.3a</em>: amb una agreujant, meitat superior. En una forquilla d'1–3 anys, això vol dir de 2 a 3 anys: ingrés directe.</li>
+      <li><em>Art. 22.8</em>: els antecedents per delictes lleus no computen per a la reincidència. Després de la reforma, un segon furt de mòbil ja pot portar l'agreujant de reincidència → meitat superior → presó.</li>
+      <li><em>Art. 86</em>: revocació de la suspensió si es delinqueix durant el termini.</li>
+      <li><em>Art. 136.1</em>, terminis de cancel·lació: 6 mesos (penes lleus); 2 anys (penes de fins a 12 mesos); 3 anys (menys greus inferiors a 3 anys); 5 anys (menys greus de 3 anys o més).</li>
+    </ul>
+    <h4>Pont cap a la lectura</h4>
+    <p>L'efecte 3 enllaça amb Chiricos et al. (2007), p. 54S: l'etiqueta formal augmenta la reincidència. I amb Sampson i Laub (1993): l'antecedent tanca l'accés a una feina estable.</p>
+  </div>
+</section>
+
+<!-- ============ 04 PALANQUES ============ -->
+<section class="slide" id="paradoxa" data-title="Tres palanques" data-cat="Teoria">
+  <div class="slide-inner flex flex-col gap-7">
+    <div class="folio"><span><b>Foli 04</b> · La paradoxa</span><span>Escola clàssica · Elecció racional</span></div>
+    <div class="flex flex-col gap-3">
+      <span class="label">Beccaria (1764) · Bentham · Teoria de l'elecció racional</span>
+      <div class="formula" id="equation" role="img" aria-label="La dissuasió és funció de la certesa, la celeritat i la severitat del càstig">
+        <span class="fx-term"><var>Dissuasió</var></span>
+        <span class="fx-op">=</span>
+        <span class="fx-term"><var>f</var></span>
+        <span class="fx-paren">(</span>
+        <span class="fx-term v" data-v="certesa"><var>Certesa</var><small>probabilitat de sanció</small></span>
+        <span class="fx-op">,</span>
+        <span class="fx-term v" data-v="celeritat"><var>Celeritat</var><small>rapidesa de la resposta</small></span>
+        <span class="fx-op">,</span>
+        <span class="fx-term v" data-v="severitat"><var>Severitat</var><small>quantia de la pena</small></span>
+        <span class="fx-paren">)</span>
+      </div>
+      <p class="fx-note" id="fx-note"></p>
+    </div>
+
+    <div class="flex flex-col gap-5 step" data-step="1">
+      <div class="tablist" role="tablist" aria-label="Lectures de les tres palanques" id="lever-tabs">
+        <button type="button" class="tab" role="tab" aria-selected="true" data-mode="legislador">Què toca el legislador</button>
+        <button type="button" class="tab" role="tab" aria-selected="false" data-mode="evidencia">Què diu l'evidència</button>
+        <button type="button" class="tab" role="tab" aria-selected="false" data-mode="cost">Quant costa avui</button>
+      </div>
+      <p class="label" id="lever-caption">Intensitat amb què s'utilitza cada palanca · esquema qualitatiu</p>
+      <div class="levers" id="levers">
+        <div class="lever" data-k="certesa" data-legislador="22" data-evidencia="82" data-cost="88">
+          <span class="lever-name">Certesa</span>
+          <div class="well"><div class="lvl"></div></div>
+          <p class="lever-txt" data-legislador="Probabilitat real de ser descobert i detingut. No es toca." data-evidencia="L'element amb més suport empíric per dissuadir." data-cost="Més policies, més investigació: milions d'euros cada any."></p>
+        </div>
+        <div class="lever" data-k="celeritat" data-legislador="22" data-evidencia="45" data-cost="64">
+          <span class="lever-name">Celeritat</span>
+          <div class="well"><div class="lvl"></div></div>
+          <p class="lever-txt" data-legislador="Rapidesa de la resposta. Tampoc no es toca." data-evidencia="Menys estudiada; una resposta ràpida lliga acte i conseqüència." data-cost="Més jutjats i personal per jutjar ràpid."></p>
+        </div>
+        <div class="lever" data-k="severitat" data-legislador="96" data-evidencia="12" data-cost="4">
+          <span class="lever-name">Severitat</span>
+          <div class="well"><div class="lvl"></div></div>
+          <p class="lever-txt" data-legislador="De multa a presó d'1 a 3 anys. És l'única que es mou." data-evidencia="Allargar penes ja llargues gairebé no dissuadeix; la presó no redueix la reincidència." data-cost="Una línia al BOE. Cost immediat: zero."></p>
+        </div>
+      </div>
+    </div>
+    <p class="text-[length:var(--t-lg)] font-semibold step" data-step="2" style="max-width:48ch">El legislador mou <span style="color:var(--red)">la palanca més barata</span> i la que té menys efecte, i deixa quietes les dues que funcionen millor.</p>
+  </div>
+  <div class="tnote">
+    <h3>L'equació de la dissuasió</h3>
+    <p>Dissuasió general (la població) i especial (qui ja ha estat castigat). Cullen et al. tracten només l'especial: què passa amb qui surt de la presó (p. 51S).</p>
+    <h4>Recorregut proposat</h4>
+    <ol style="padding-left:1.2em">
+      <li>Pestanya «legislador»: només puja la severitat.</li>
+      <li>Pestanya «evidència»: la certesa domina.</li>
+      <li>Pestanya «cost»: és exactament al revés. Aquí apareix el punt <em>b</em> de la guia.</li>
+    </ol>
+    <div class="warn">Precisió: la lectura només diu (p. 51S, citant Durlauf i Nagin, 2011) que hi ha «scant evidence» que allargar penes ja llargues tingui efecte dissuasiu general. La idea que la certesa pesa més que la severitat ve de Durlauf i Nagin (2011) i de la literatura general: presenteu-la com a coneixement del camp, no com una troballa de Cullen. Les barres són un esquema qualitatiu, no dades.</div>
+    <h4>Pregunta socràtica</h4>
+    <p>«Quina proporció de furts de mòbils creieu que acaba amb una detenció? Si és molt baixa, què importa si la pena és de 3 mesos o de 3 anys?»</p>
+  </div>
+</section>
+
+<!-- ============ 05 PREU O EXPERIÈNCIA ============ -->
+<section class="slide" id="experiencia" data-title="Preu o experiència" data-cat="Teoria">
+  <div class="slide-inner flex flex-col gap-7">
+    <div class="folio"><span><b>Foli 05</b> · Dues teories enfrontades</span><span>Cullen et al., pp. 52S–53S</span></div>
+    <h2 class="h-title">La presó: <em>un preu</em> o una experiència?</h2>
+    <div class="versus">
+      <div class="sheet flex flex-col gap-4 step" data-step="1">
+        <span class="label">Teoria de la dissuasió</span>
+        <h3 class="side-h">Una etiqueta de preu</h3>
+        <p style="margin:0">Com més car és el delicte, menys se'n «compra». Com el tabac o la gasolina: si el preu puja, el consum baixa.</p>
+        <div class="predict"><span class="arrow-big" style="color:var(--green)">↓</span><span><strong>Predicció:</strong> la presó redueix la reincidència.</span></div>
+      </div>
+      <span class="vs step" data-step="2">vs</span>
+      <div class="sheet flex flex-col gap-4 step" data-step="2" style="background:var(--ink);color:var(--sheet)">
+        <span class="label" style="color:#C9C2B2">Teoria de l'experiència social</span>
+        <h3 class="side-h">Una «societat de captius»</h3>
+        <p style="margin:0">Anys convivint amb altres infractors, lluny de la família i amb l'estigma de «presidiari» (Sykes, 1958; Clemmer, 1940).</p>
+        <div class="predict" style="border-color:var(--sheet)"><span class="arrow-big" style="color:#F08A7E">↑</span><span><strong>Predicció:</strong> la presó augmenta la reincidència.</span></div>
+      </div>
+    </div>
+    <div class="sheet-soft step" data-step="3" data-choice-group="por">
+      <p class="text-[length:var(--t-lg)] font-semibold" style="margin:0 0 .7em">Què fa més por a un infractor?</p>
+      <div class="flex flex-wrap gap-4">
+        <button type="button" class="btn" data-choice="a">1 any de presó</button>
+        <button type="button" class="btn" data-choice="b">Una sanció llarga a la comunitat amb supervisió intensiva</button>
+      </div>
+      <div id="por-answer" hidden class="answer mt-4 grid gap-3 md:grid-cols-[auto_minmax(0,1fr)] items-start">
+        <span class="tag tag-ink">Enquestes a infractors</span>
+        <p style="margin:0">Molts temen més la <strong>supervisió intensiva i llarga</strong> (controls, polsera, analítiques, multes, restitució) que una pena curta de presó. La presó no té el monopoli del càstig. <span class="cite">Petersilia i Deschenes (1994); Moore, May i Wood (2008), p. 52S</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Preu vs. experiència</h3>
+    <p>p. 52S: «deterrence scholars wish to boil down punishment to a simple price tag». Per a la majoria de criminòlegs, això «trunca la realitat».</p>
+    <h4>Dades útils</h4>
+    <ul>
+      <li>Molts costos arriben abans de la sentència: detenció, presó provisional, fiança, humiliació pública, despeses legals (Feeley, 1979).</li>
+      <li>Les sancions comunitàries poden ser llargues i intensives: supervisió, control electrònic, arrest domiciliari, analítiques, multes, restitució (Byrne, Lurigio i Petersilia, 1992).</li>
+      <li>Per què es prefereix la presó? Perquè és «qualitativament diferent» (institució total) i perquè és fàcil de mesurar (p. 52S).</li>
+    </ul>
+    <h4>Pregunta socràtica</h4>
+    <p>«Si la presó fos només un preu, per què hi ha qui hi torna una vegada i una altra?»</p>
+  </div>
+</section>
+
+<!-- ============ 06 QUATRE MECANISMES ============ -->
+<section class="slide" id="mecanismes" data-title="Quatre mecanismes" data-cat="Teoria">
+  <div class="slide-inner flex flex-col gap-7">
+    <div class="folio"><span><b>Foli 06</b> · Per què la presó pot ser criminògena</span><span>Cullen et al., p. 53S</span></div>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 class="h-title" style="max-width:18ch">Què passa <em>dins</em> la presó?</h2>
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <button type="button" class="flip step" data-step="1"><span class="flip-inner" style="display:block">
+        <span class="flip-face flip-front"><span class="label">01 · Aprenentatge</span><span class="h-title" style="font-size:var(--t-xl)">Escola del delicte</span><span>Què s'hi aprèn, i de qui?</span></span>
+        <span class="flip-face flip-back"><span class="label" style="color:#F08A7E">Associació diferencial</span><span style="font-size:var(--t-sm)">Convivència diària amb altres infractors: s'hi transmeten tècniques, contactes i valors favorables al delicte.</span><span class="cite">Sutherland; Akers · «a school of crime»</span></span>
+      </span></button>
+      <button type="button" class="flip step" data-step="2"><span class="flip-inner" style="display:block">
+        <span class="flip-face flip-front"><span class="label">02 · Tensió</span><span class="h-title" style="font-size:var(--t-xl)">Tensions nocives</span><span>Què fa la presó amb les emocions?</span></span>
+        <span class="flip-face flip-back"><span class="label" style="color:#F08A7E">Teoria de la tensió</span><span style="font-size:var(--t-sm)">Privacions, estrès i victimització física generen ràbia i frustració que empenyen cap al delicte.</span><span class="cite">Agnew · «enduring noxious strains»</span></span>
+      </span></button>
+      <button type="button" class="flip step" data-step="3"><span class="flip-inner" style="display:block">
+        <span class="flip-face flip-front"><span class="label">03 · Control</span><span class="h-title" style="font-size:var(--t-xl)">Vincles trencats</span><span>Què perd qui entra a presó?</span></span>
+        <span class="flip-face flip-back"><span class="label" style="color:#F08A7E">Teoria del control social</span><span style="font-size:var(--t-sm)">L'empresonament trenca els vincles convencionals (família, feina, escola) que retenen la persona i n'afebleix el control social.</span><span class="cite">Hirschi (1969) · «social bonds severed»</span></span>
+      </span></button>
+      <button type="button" class="flip step" data-step="4"><span class="flip-inner" style="display:block">
+        <span class="flip-face flip-front"><span class="label">04 · Etiqueta</span><span class="h-title" style="font-size:var(--t-xl)">Etiqueta i desafiament</span><span>Què passa quan surt?</span></span>
+        <span class="flip-face flip-back"><span class="label" style="color:#F08A7E">Etiquetatge i desafiament</span><span style="font-size:var(--t-sm)">L'estigma d'expresidiari tanca portes legítimes i provoca ràbia i desafiament contra el sistema.</span><span class="cite">Becker; Lemert; Sherman (1993) · «stigmatizing labels … defiance»</span></span>
+      </span></button>
+    </div>
+    <p class="text-[length:var(--t-lg)] step" data-step="5" style="max-width:52ch"><strong>Conclusió teòrica:</strong> si aquests mecanismes pesen més que la por al càstig, la persona surt de la presó <span style="color:var(--red);font-weight:700">amb més propensió a delinquir</span>, no amb menys.</p>
+  </div>
+  <div class="tnote">
+    <h3>Els quatre mecanismes</h3>
+    <p>Text literal (p. 53S): imprisonment increases exposure to criminogenic risk factors: «differential associations with offenders in a "school of crime," enduring noxious strains, having conventional social bonds severed, and facing stigmatizing labels that foster anger and a sense of defiance».</p>
+    <div class="warn">L'atribució als autors (Sutherland i Akers; Agnew; Hirschi; Becker i Lemert) és una lectura nostra, coherent amb el programa. L'article només cita explícitament Sherman (1993), Sampson i Laub (1993), Sykes (1958) i Clemmer (1940).</div>
+    <h4>Pregunta socràtica</h4>
+    <p>«Quin d'aquests quatre mecanismes afectaria més un jove de 19 anys que furta un mòbil per primera vegada?» (Preparació del foli 14.)</p>
+  </div>
+</section>
+
+<!-- ============ 07 ROLS ============ -->
+<section class="slide" id="rols" data-title="Rols A i B" data-cat="Debat">
+  <div class="slide-inner flex flex-col gap-7">
+    <div class="folio"><span><b>Foli 07</b> · Treball en grups</span><span>Grups de 4 o 5 persones</span></div>
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-stretch">
+      <article class="role role-A">
+        <div class="role-head"><span class="label" style="color:#C9C2B2">Rol A · El legislador</span><span class="role-letter">A</span></div>
+        <div class="role-body">
+          <p class="text-[length:var(--t-lg)] font-semibold" style="margin:0">Defenseu la reforma: per què cal passar a 1–3 anys de presó?</p>
+          <ul>
+            <li>Arguments polítics i simbòlics</li>
+            <li>Arguments jurídics i de proporcionalitat</li>
+            <li>Arguments econòmics</li>
+            <li>Arguments criminològics, malgrat Cullen</li>
+          </ul>
+          <button type="button" class="btn btn-ghost mt-auto self-start" data-toggle="hint-a" aria-expanded="false">Orientació</button>
+          <p id="hint-a" hidden class="answer cite" style="font-size:var(--t-sm)">Elements a considerar: l'alarma social, el contingut actual d'un telèfon mòbil i la multireincidència.</p>
+        </div>
+      </article>
+      <article class="role role-B">
+        <div class="role-head"><span class="label" style="color:#C9D3F0">Rol B · Assessoria criminològica</span><span class="role-letter">B</span></div>
+        <div class="role-body">
+          <p class="text-[length:var(--t-lg)] font-semibold" style="margin:0">Rebateu la reforma i proposeu un pla realista sense tocar el Codi Penal.</p>
+          <ul style="color:var(--blue)">
+            <li><span style="color:var(--ink)">Dades de Cullen et al. (2011)</span></li>
+            <li><span style="color:var(--ink)">Com augmentar la certesa</span></li>
+            <li><span style="color:var(--ink)">Com implicar la comunitat</span></li>
+            <li><span style="color:var(--ink)">Què fer amb qui ja ha estat detingut</span></li>
+          </ul>
+          <button type="button" class="btn btn-ghost mt-auto self-start" data-toggle="hint-b" aria-expanded="false" style="border-color:var(--blue);color:var(--blue)">Orientació</button>
+          <p id="hint-b" hidden class="answer cite" style="font-size:var(--t-sm)">Elements a considerar: on es concentren els furts, qui adquireix els terminals i quin valor té un mòbil bloquejat.</p>
+        </div>
+      </article>
+      <div class="sheet flex flex-col gap-4 items-start justify-center xl:min-w-[340px]">
+        <span class="label">Temps de treball</span>
+        <div class="timer" id="timer" role="timer" aria-live="off">20:00</div>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="btn btn-red" id="timer-toggle">Inicia</button>
+          <button type="button" class="btn btn-ghost" id="timer-plus">+1 min</button>
+          <button type="button" class="btn btn-ghost" id="timer-reset">Reinicia</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Treball en grups (20 min)</h3>
+    <p>Meitat dels grups: rol A. L'altra meitat: rol B.</p>
+    <h4>Mentre passegeu pels grups</h4>
+    <ul>
+      <li>Rol A que es queda en «la gent té por»: «I què hi diu el pressupost? I la víctima?» (cost zero, retribució).</li>
+      <li>Rol A sense arguments criminològics: «La incapacitació no és dissuasió. Funciona?» (p. 51S).</li>
+      <li>Rol B que només diu «més policia»: «On? Fent què? I el mercat dels mòbils robats?»</li>
+      <li>Rol B que oblida el detingut: «I amb el que ja han enxampat, què en feu?» (sancions comunitàries, RNR).</li>
+    </ul>
+    <p>Recordeu que la participació s'avalua (12,5 %, escala A–F).</p>
+    <h4>Dreceres</h4>
+    <p><em>T</em> inicia o atura el cronòmetre des de qualsevol bloc.</p>
+  </div>
+</section>
+
+<!-- ============ 08 PER QUÈ S'APUGEN ============ -->
+<section class="slide" id="per-que" data-title="Per què s'apugen?" data-cat="Debat">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 08</b> · Debat, bloc 1</span><span>Rol A vs. crítica criminològica</span></div>
+    <h2 class="h-title">Per què s'apugen les penes <em>malgrat l'evidència?</em></h2>
+    <div class="flex flex-wrap gap-3" role="group" aria-label="Filtra els arguments" data-filter-group="arg1">
+      <button type="button" class="chip" aria-pressed="true" data-filter="tots">Tots</button>
+      <button type="button" class="chip" aria-pressed="false" data-filter="politica">Política</button>
+      <button type="button" class="chip" aria-pressed="false" data-filter="economia">Economia</button>
+      <button type="button" class="chip" aria-pressed="false" data-filter="ciencia">Ciència</button>
+      <button type="button" class="chip" aria-pressed="false" data-filter="rolA">Arguments del rol A</button>
+    </div>
+    <div class="arg-grid" data-filter-items="arg1">
+      <article class="arg sheet step" data-step="1" data-cat="politica">
+        <span class="tag tag-ink self-start">Política · punt a</span>
+        <h3>Populisme punitiu</h3>
+        <p>Alarma social i titulars → el polític necessita una resposta immediata. Reformar el Codi Penal comunica que «el Govern actua». Ningú vol semblar tou amb el delicte.</p>
+        <button type="button" class="btn btn-ghost self-start mt-auto" data-toggle="c1" aria-expanded="false">Rèplica criminològica</button>
+        <div id="c1" hidden class="counter answer">Tranquil·litza l'opinió pública, però no redueix els furts. Cullen: molts polítics s'hi van sumar per «por de semblar indulgents» (p. 49S).</div>
+      </article>
+      <article class="arg sheet step" data-step="2" data-cat="economia">
+        <span class="tag tag-ink self-start">Economia · punt b</span>
+        <h3>El cost pressupostari immediat</h3>
+        <p>La certesa exigeix policies, jutjats i programes: diners avui. Apujar la pena per llei té un cost immediat de zero.</p>
+        <button type="button" class="btn btn-ghost self-start mt-auto" data-toggle="c2" aria-expanded="false">Rèplica criminològica</button>
+        <div id="c2" hidden class="counter answer">El cost arriba després: més presos i més places. A Califòrnia, Schwarzenegger (2010) va proposar prohibir per la Constitució gastar més en presons que en universitats (p. 49S).</div>
+      </article>
+      <article class="arg sheet step" data-step="3" data-cat="ciencia">
+        <span class="tag tag-ink self-start">Ciència · punt c</span>
+        <h3>La criminologia no té l'estatus de la medicina</h3>
+        <p>El «sentit comú» (com més dura és la pena, més por fa) pesa més que l'evidència empírica.</p>
+        <button type="button" class="btn btn-ghost self-start mt-auto" data-toggle="c3" aria-expanded="false">Rèplica criminològica</button>
+        <div id="c3" hidden class="counter answer">Cap ministre de Sanitat aprovaria un tractament que 57 estudis associen a més recaigudes (Jonson, 2010). Cullen: el «suposat sentit comú» també s'equivoca (p. 59S).</div>
+      </article>
+      <article class="arg sheet step" data-step="4" data-cat="rolA">
+        <span class="tag tag-blue self-start">Rol A · retribució</span>
+        <h3>Retribució: el dany real del furt</h3>
+        <p>Conté la vida digital de la víctima: banca, fotografies, feina, doble factor. El dany supera de molt el valor de mercat.</p>
+        <button type="button" class="btn btn-ghost self-start mt-auto" data-toggle="c4" aria-expanded="false">Rèplica criminològica</button>
+        <div id="c4" hidden class="counter answer">És un argument de justícia, no de prevenció. Cullen admet que la presó «fa justícia» amb qui ha causat un dany greu (p. 60S). Un furt de mòbil hi encaixa? I si és així, s'ha de dir sense prometre menys delictes.</div>
+      </article>
+      <article class="arg sheet step" data-step="5" data-cat="rolA">
+        <span class="tag tag-blue self-start">Rol A · incapacitació</span>
+        <h3>Incapacitació</h3>
+        <p>Mentre el lladre professional compleix 1–3 anys, físicament no pot furtar al metro.</p>
+        <button type="button" class="btn btn-ghost self-start mt-auto" data-toggle="c5" aria-expanded="false">Rèplica criminològica</button>
+        <div id="c5" hidden class="counter answer">Les estimacions s'inflen perquè comparen la presó amb «no fer res», no amb una sanció comunitària (p. 51S). I si hi ha demanda de mòbils robats, el lloc el pot ocupar un altre (substitució).</div>
+      </article>
+    </div>
+    <div class="socratic step" data-step="6">
+      <span class="label">Qüestió per al debat</span>
+      <q id="soc-q">Si la pena no dissuadeix gaire, per què la majoria de la gent no furta mòbils?</q>
+      <button type="button" class="btn btn-ghost" id="soc-next">Següent qüestió</button>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Bloc 1 a la pissarra: per què s'apugen?</h3>
+    <p>Feu parlar alternativament un portaveu del rol A i un del rol B. Reveleu cada targeta quan el grup hagi dit l'argument, o feu-la servir per provocar-lo.</p>
+    <h4>Cites de suport</h4>
+    <ul>
+      <li>p. 49S: «afraid to appear lenient on crime»; Califòrnia i Schwarzenegger (2010).</li>
+      <li>p. 59S: polítics i jutges han fet «bold claims» amb «hubris», per una «heartfelt belief»; «so-called commonsense» pot ser incorrecte.</li>
+      <li>p. 60S: la presó probablement «does a good job exacting justice on those who have inflicted serious harm on others and of warehousing the truly wicked».</li>
+      <li>p. 51S: el biaix de les estimacions d'incapacitació.</li>
+    </ul>
+    <div class="warn">L'efecte de substitució (un altre ocupa el lloc del detingut en un mercat amb demanda) no és a la lectura. És un argument general de la criminologia.</div>
+    <h4>Més preguntes socràtiques</h4>
+    <p>El botó «Següent qüestió» en mostra fins a cinc.</p>
+  </div>
+</section>
+
+<!-- ============ 09 ALTERNATIVES ============ -->
+<section class="slide" id="alternatives" data-title="Alternatives" data-cat="Debat">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 09</b> · Debat, bloc 2</span><span>Rol B · Cullen et al., p. 61S</span></div>
+    <h2 class="h-title">Alternatives <em>sense reforma</em> penal</h2>
+    <p class="label">La cadena del furt d'un telèfon mòbil</p>
+    <div class="flow step" data-step="1" role="tablist" aria-label="Cadena del furt" id="flow">
+      <button type="button" class="flow-node" role="tab" aria-selected="true" data-node="ocasio"><span class="n">Baula 1</span><span class="t">L'ocasió</span></button>
+      <svg class="flow-arrow" viewBox="0 0 60 18" aria-hidden="true"><path d="M0 9h50" stroke="var(--ink)" stroke-width="3" fill="none"/><path d="M46 2l10 7-10 7z" fill="var(--ink)"/></svg>
+      <button type="button" class="flow-node" role="tab" aria-selected="false" data-node="furt"><span class="n">Baula 2</span><span class="t">El furt</span></button>
+      <svg class="flow-arrow" viewBox="0 0 60 18" aria-hidden="true"><path d="M0 9h50" stroke="var(--ink)" stroke-width="3" fill="none"/><path d="M46 2l10 7-10 7z" fill="var(--ink)"/></svg>
+      <button type="button" class="flow-node" role="tab" aria-selected="false" data-node="receptacio"><span class="n">Baula 3</span><span class="t">La receptació</span></button>
+      <svg class="flow-arrow" viewBox="0 0 60 18" aria-hidden="true"><path d="M0 9h50" stroke="var(--ink)" stroke-width="3" fill="none"/><path d="M46 2l10 7-10 7z" fill="var(--ink)"/></svg>
+      <button type="button" class="flow-node" role="tab" aria-selected="false" data-node="resposta"><span class="n">Baula 4</span><span class="t">La resposta</span></button>
+    </div>
+
+    <div class="step" data-step="2">
+      <div data-node-panel="ocasio" class="grid gap-5 md:grid-cols-2">
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: comunitat</span><span class="tag tag-ink">Punt b del seminari</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Control social informal</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Allà on domina l'anonimat i el «no t'hi fiquis», qui furta sap que ningú intervindrà. Xarxes de comerciants, personal del transport i patrulles a peu de proximitat.</p>
+          <span class="cite mt-auto">Wilson i Kelling (1982), <i>Broken Windows</i></span>
+        </article>
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: oportunitat</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Prevenció situacional</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Espais il·luminats i cuidats, avisos als punts crítics, càmeres i «guardians» que vigilen persones i béns.</p>
+          <span class="cite mt-auto">Cullen et al., p. 61S; Felson i Boba (2010)</span>
+        </article>
+      </div>
+      <div data-node-panel="furt" hidden class="grid gap-5 md:grid-cols-2">
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: certesa</span><span class="tag tag-ink">Punt a del seminari</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Patrullatge en punts calents</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Els furts no es reparteixen a l'atzar: es concentren en estacions concretes, zones d'oci nocturn i eixos turístics. Patrulla visible i d'incògnit just allà.</p>
+          <span class="cite mt-auto">Cid i Larrauri (2023), p. 31</span>
+        </article>
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: certesa</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Policia orientada a problemes</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Saber on i per què es concentren els delictes i dissenyar estratègies proactives per resoldre aquell «problema» concret.</p>
+          <span class="cite mt-auto">Cullen et al., p. 61S</span>
+        </article>
+      </div>
+      <div data-node-panel="receptacio" hidden class="grid gap-5 md:grid-cols-2">
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: benefici</span><span class="tag tag-ink">Punt a del seminari</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Persecució de la receptació</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Qui furta deu mòbils al dia no els vol per a ell: els ven a xarxes que els desbloquegen, els desmunten o els envien a l'estranger. Sense comprador no hi ha negoci.</p>
+          <span class="cite mt-auto">Elecció racional aplicada · receptació, art. 298 CP</span>
+        </article>
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: oportunitat</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Inutilització del terminal</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Bloqueig remot immediat per IMEI, també de les peces i a escala internacional. Si el terminal queda inservible en pocs minuts, el benefici del furt desapareix.</p>
+          <span class="cite mt-auto">Prevenció situacional · Cullen et al., p. 61S</span>
+        </article>
+      </div>
+      <div data-node-panel="resposta" hidden class="grid gap-5 md:grid-cols-2">
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: reincidència</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Sancions comunitàries exigents</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Treballs en benefici de la comunitat, restitució a la víctima i supervisió intensiva. Castiguen i no tallen feina ni família.</p>
+          <span class="cite mt-auto">Cullen et al., p. 60S</span>
+        </article>
+        <article class="sheet flex flex-col gap-3">
+          <div class="flex flex-wrap gap-2"><span class="lever-badge">Palanca: reincidència</span></div>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Tractament segons el risc (RNR)</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Intervencions cognitivoconductuals adaptades al risc i a les necessitats (addiccions, autocontrol). Redueixen la reincidència.</p>
+          <span class="cite mt-auto">Andrews i Bonta (2010); Cullen et al., pp. 60S–61S</span>
+        </article>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Bloc 2 a la pissarra: alternatives realistes</h3>
+    <p>Feu que el rol B situï cada proposta en una baula. Si totes cauen a la baula 2 («més policia»), empenyeu cap a la 3 i la 4.</p>
+    <h4>Text de Cullen (p. 61S)</h4>
+    <p>La inversió en presó massiva ha desviat diners de: prevenció situacional (alarmes, càmeres de vigilància, «guardians over property or potential victims»), policia orientada a problemes («know where and why crimes are concentrated») i intervenció primerenca amb joves de risc, famílies i escoles. Fonts citades: Durlauf i Nagin (2011); Farrington i Welsh (2007); Felson i Boba (2010); Kleiman (2009); Waller (2006).</p>
+    <h4>Connexions del programa</h4>
+    <ul>
+      <li>Cid i Larrauri (2023, p. 31): policia orientada a problemes i punts calents.</li>
+      <li>Wilson i Kelling (1982): anonimat, desordre i control informal.</li>
+      <li>Sobre la resposta: p. 60S, «Prisons have no special powers to scare offenders straight. They should be a sanction of last resort, not first resort.»</li>
+    </ul>
+    <h4>Pregunta socràtica</h4>
+    <p>«Quina d'aquestes mesures redueix els furts encara que la persona no sàpiga quina pena té el furt?»</p>
+  </div>
+</section>
+
+<!-- ============ 10 LES XIFRES ============ -->
+<section class="slide" id="xifres" data-title="Les xifres" data-cat="Evidència">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 10</b> · El veredicte de l'evidència</span><span>Cullen et al., pp. 53S–55S</span></div>
+    <h2 class="h-title">Reincidència <em>després de la presó</em></h2>
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] items-start">
+      <div class="sheet flex flex-col gap-5">
+        <div class="flex flex-wrap justify-between gap-3 items-baseline">
+          <span class="label">Presos alliberats el 1994 als EUA · 3 anys de seguiment</span>
+          <span class="cite">Langan i Levin (2002)</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="guess" class="text-[length:var(--t-base)] font-semibold">Estimació prèvia: quin percentatge torna a ser detingut en tres anys?</label>
+          <input id="guess" class="range" type="range" min="0" max="100" step="1" value="40" style="--p:40%">
+        </div>
+        <div><button type="button" class="btn btn-red" id="reveal-bars">Revela les dades</button></div>
+        <div class="bars" id="bars">
+          <div class="bar-row is-blue"><span>Estimació de l'aula</span><span class="track"><span class="val" id="guess-bar" style="width:40%"></span></span><span class="pct num" id="guess-out">40 %</span></div>
+          <div class="bar-row is-red"><span>Tornen a ser detinguts</span><span class="track"><span class="val" data-w="67.5"></span></span><span class="pct num">67,5 %</span></div>
+          <div class="bar-row"><span>Nova condemna</span><span class="track"><span class="val" data-w="46.9"></span></span><span class="pct num">46,9 %</span></div>
+          <div class="bar-row"><span>Nova pena de presó</span><span class="track"><span class="val" data-w="25.4"></span></span><span class="pct num">25,4 %</span></div>
+          <div class="bar-row"><span>Tornen a presó (nous delictes o incompliments)</span><span class="track"><span class="val" data-w="51.8"></span></span><span class="pct num">51,8 %</span></div>
+        </div>
+        <p class="cite" style="font-size:var(--t-sm)">I prop del <strong style="color:var(--red)">30 %</strong> ja havia estat detingut abans dels <strong>3 mesos</strong>.</p>
+      </div>
+      <div class="flex flex-col gap-5">
+        <article class="sheet flex flex-col gap-3 step" data-step="1" style="border-color:var(--red)">
+          <span class="tag tag-red self-start">Experiment natural · Florida</span>
+          <h3 class="side-h" style="font-size:var(--t-lg)">Chiricos et al. (2007)</h3>
+          <p style="margin:0;font-size:var(--t-sm)">Els jutges podien no formalitzar la declaració de culpabilitat si la persona complia la <i>probation</i>. <strong>95.919 persones</strong>, 2 anys: qui va rebre l'etiqueta formal de delinqüent va reincidir més.</p>
+          <span class="cite">Vegeu el foli 03, tercer efecte</span>
+        </article>
+        <article class="sheet-soft flex flex-col gap-3 step" data-step="2">
+          <span class="tag tag-ink self-start">Revisió Campbell · 29 assajos</span>
+          <p style="margin:0;font-size:var(--t-sm)">Processar joves pel sistema penal «no sembla tenir cap efecte de control del delicte. De fet, gairebé tots els resultats van ser negatius». <span class="cite">Petrosino et al. (2010)</span></p>
+        </article>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Les xifres</h3>
+    <p>Langan i Levin (2002): presos estatals alliberats el 1994. Als 3 anys: 67,5 % detinguts de nou, 46,9 % nova condemna, 25,4 % nova pena de presó; 51,8 % de retorn a presó per nous delictes o incompliments tècnics; aproximadament un 30 % detinguts en els 3 primers mesos (pp. 53S–54S). Cullen afegeix que les xifres subestimen la reincidència real, perquè només compten el que es detecta.</p>
+    <div class="warn">Matís que fa el mateix Cullen (p. 53S): una reincidència alta no demostra per si sola que la presó sigui pitjor que una sanció comunitària; caldria comparar-les. Per això calen els estudis del foli 11.</div>
+    <h4>Chiricos et al. (2007)</h4>
+    <p>No és un dels «cinc estudis il·lustratius»: apareix a la introducció de l'apartat (p. 54S), dins la línia que contrasta dissuasió i etiquetatge. Mecanisme de Florida: <em>withhold adjudication</em>. Altres fonts: Rochester Youth Survey (Bernburg i Krohn, 2003) i Petrosino, Turpin-Petrosino i Guckenburg (2010).</p>
+    <h4>Dinàmica</h4>
+    <p>Demaneu a la sala una xifra, poseu-la al control lliscant (barra blava) i després reveleu les dades.</p>
+  </div>
+</section>
+
+<!-- ============ 11 CINC ESTUDIS ============ -->
+<section class="slide" id="estudis" data-title="Cinc estudis" data-cat="Evidència">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 11</b> · Cinc estudis il·lustratius</span><span>Cullen et al., pp. 55S–57S</span></div>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 class="h-title" style="max-width:20ch">Cinc països, cinc mètodes, <em>una conclusió</em></h2>
+      <p class="cite" style="max-width:36ch">Criteris de selecció: màxima qualitat, angles metodològics diferents, llocs i moments diferents.</p>
+    </div>
+    <div class="tablist" role="tablist" aria-label="Estudis" data-tabs="estudis">
+      <button type="button" class="tab" role="tab" aria-selected="true" data-tab="e1">Sampson i Laub (1993)</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="e2">Spohn i Holleran (2002)</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="e3">Smith i Gendreau (2010)</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="e4">Nieuwbeerta et al. (2009)</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="e5">Nagin i Snodgrass (2010)</button>
+    </div>
+    <div data-panels="estudis">
+      <div data-panel="e1" class="sheet grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <dl class="flex flex-col gap-3"><div><dt class="label">On</dt><dd class="text-[length:var(--t-lg)] font-semibold">Boston, EUA · dades dels Glueck</dd></div><div><dt class="label">Disseny</dt><dd>Longitudinal, del jove a l'adult · <i>Crime in the Making</i></dd></div></dl>
+        <div class="flex flex-col gap-3"><span class="label">Troballa</span><p style="margin:0;font-size:var(--t-lg);line-height:1.3">La durada de l'internament no té efecte directe, però <strong>destrueix l'estabilitat laboral</strong>, i això fa reincidir.</p><p class="cite" style="font-size:var(--t-sm)">«Etiquetatge estructural»: molts quedaven apartats «de les vies més prometedores de desistiment» (pp. 255–256).</p></div>
+      </div>
+      <div data-panel="e2" hidden class="sheet grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <dl class="flex flex-col gap-3"><div><dt class="label">On</dt><dd class="text-[length:var(--t-lg)] font-semibold">Jackson County (Kansas City), EUA</dd></div><div><dt class="label">Disseny</dt><dd>Dades de 1993 · 776 en <i>probation</i> vs. 301 a presó · 48 mesos</dd></div></dl>
+        <div class="flex flex-col gap-3"><span class="label">Troballa</span><p style="margin:0;font-size:var(--t-lg);line-height:1.3">«No trobem cap evidència que l'empresonament redueixi la probabilitat de reincidència.» Qui va a presó reincideix <strong>més i abans</strong>.</p><p class="cite" style="font-size:var(--t-sm)">En delictes de drogues: de 5 a 6 vegades més probabilitat de reincidir.</p></div>
+      </div>
+      <div data-panel="e3" hidden class="sheet grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <dl class="flex flex-col gap-3"><div><dt class="label">On</dt><dd class="text-[length:var(--t-lg)] font-semibold">Penitenciaries federals del Canadà</dd></div><div><dt class="label">Disseny</dt><dd>5.469 homes · 2 anys · presons orientades a la rehabilitació</dd></div></dl>
+        <div class="flex flex-col gap-3"><span class="label">Troballa</span><p style="margin:0;font-size:var(--t-lg);line-height:1.3">Alt risc: depèn del tractament (l'adequat redueix, l'inadequat augmenta). <strong>Baix risc: la presó els perjudica sempre</strong>, rebin el programa que rebin.</p><p class="cite" style="font-size:var(--t-sm)">És la base de la tercera conclusió de Cullen (foli 15).</p></div>
+      </div>
+      <div data-panel="e4" hidden class="sheet grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <dl class="flex flex-col gap-3"><div><dt class="label">On</dt><dd class="text-[length:var(--t-lg)] font-semibold">Països Baixos</dd></div><div><dt class="label">Disseny</dt><dd>1.475 primers empresonaments (18–38 anys) vs. 1.315 condemnats sense presó · aparellament per risc</dd></div></dl>
+        <div class="flex flex-col gap-3"><span class="label">Troballa</span><p style="margin:0;font-size:var(--t-lg);line-height:1.3">La primera presó s'associa amb <strong>més activitat delictiva</strong> en 3 anys, en tota mena de delictes.</p><p class="cite" style="font-size:var(--t-sm)">I en presons menys dures que les dels EUA, amb una estada mitjana de <strong>14 setmanes</strong> (només l'1 % va passar d'un any).</p></div>
+      </div>
+      <div data-panel="e5" hidden class="sheet flex flex-col gap-4">
+        <div class="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+          <dl class="flex flex-col gap-3"><div><dt class="label">On</dt><dd class="text-[length:var(--t-lg)] font-semibold">Pennsilvània, EUA</dd></div><div><dt class="label">Disseny</dt><dd>Els casos s'assignen <strong>a l'atzar</strong> a jutges més durs o més benèvols</dd></div></dl>
+          <div class="flex flex-col gap-3" data-choice-group="jutges">
+            <span class="label">Predicció</span>
+            <p style="margin:0;font-size:var(--t-lg);line-height:1.3">Els casos que van caure en mans dels jutges més durs, com van reincidir?</p>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" class="btn" data-choice="menys">Menys</button>
+              <button type="button" class="btn" data-choice="igual">Igual</button>
+              <button type="button" class="btn" data-choice="mes">Més</button>
+            </div>
+          </div>
+        </div>
+        <div id="jutges-answer" hidden class="answer flex flex-wrap items-center gap-6">
+          <span class="stamp" style="font-size:var(--t-xl)">Cap diferència</span>
+          <p style="margin:0;max-width:44ch;font-size:var(--t-base)">Si la presó dissuadís, els casos dels jutges durs haurien de reincidir menys. No va passar. Com que l'assignació és aleatòria, és gairebé un experiment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Els cinc estudis</h3>
+    <ol style="padding-left:1.2em">
+      <li><em>Sampson i Laub (1993)</em>: reanàlisi dels Glueck. Efectes indirectes criminògens via estabilitat laboral.</li>
+      <li><em>Spohn i Holleran (2002)</em>: «We find no evidence that imprisonment reduces the likelihood of recidivism» (p. 329).</li>
+      <li><em>Smith i Gendreau (2010)</em>: alt risc segons el tractament; baix risc, sempre pitjor.</li>
+      <li><em>Nieuwbeerta, Nagin i Blokland (2009)</em>: Criminal Career and Life-Course Study; trajectòries per grups i aparellament per risc.</li>
+      <li><em>Nagin i Snodgrass (2010)</em>: assignació aleatòria a jutges amb severitat diferent; cap diferència en la reincidència.</li>
+    </ol>
+    <h4>Per què aquests cinc</h4>
+    <p>p. 55S: (1) la màxima qualitat, perquè els resultats no s'atribueixin a biaixos; (2) enfocaments metodològics diferents; (3) llocs i moments diferents.</p>
+    <h4>Argument per a la classe</h4>
+    <p>Nieuwbeerta respon «això són els EUA»: passa fins i tot a Europa amb penes curtes. Útil per a la reforma espanyola, on les penes serien d'1–3 anys.</p>
+  </div>
+</section>
+
+<!-- ============ 12 METAANÀLISIS ============ -->
+<section class="slide" id="metaanalisis" data-title="Metaanàlisis" data-cat="Evidència">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 12</b> · Revisions sistemàtiques</span><span>Cullen et al., pp. 57S–58S</span></div>
+    <h2 class="h-title">Presó vs. sanció comunitària: <em>cap a on es mou la reincidència?</em></h2>
+    <div class="grid gap-8 xl:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start">
+      <div class="sheet dotplot flex flex-col gap-1" id="dotplot">
+        <div class="dp-row" style="border-bottom:2px solid var(--ink)"><span class="label">Estudi</span><div class="dp-axis" id="dp-axis"></div></div>
+        <div class="dp-row step" data-step="1" data-v="7"><span class="dp-name"><b>Gendreau et al. (2000)</b><br><span class="cite">totes les comparacions</span></span><div class="dp-track"></div></div>
+        <div class="dp-row step" data-step="1" data-v="0"><span class="dp-name"><b>Gendreau et al. (2000)</b><br><span class="cite">efecte ponderat</span></span><div class="dp-track"></div></div>
+        <div class="dp-row step" data-step="2" data-v="11"><span class="dp-name"><b>Smith, Goggin i Gendreau (2002)</b><br><span class="cite">estudis d'alta qualitat</span></span><div class="dp-track"></div></div>
+        <div class="dp-row step" data-step="2" data-v="8"><span class="dp-name"><b>Smith, Goggin i Gendreau (2002)</b><br><span class="cite">efecte ponderat</span></span><div class="dp-track"></div></div>
+        <div class="dp-row step" data-step="3" data-v="14"><span class="dp-name"><b>Jonson (2010)</b> · 57 estudis<br><span class="cite">global</span></span><div class="dp-track"></div></div>
+        <div class="dp-row step" data-step="3" data-v="5"><span class="dp-name"><b>Jonson (2010)</b><br><span class="cite">només màxima qualitat</span></span><div class="dp-track"></div></div>
+        <div class="flex justify-between gap-4 flex-wrap mt-2 cite">
+          <span style="color:var(--green)">◀ la presó reduiria la reincidència</span>
+          <span style="color:var(--red)">la presó l'augmenta ▶</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-5">
+        <div class="sheet flex flex-col gap-4 step" data-step="4">
+          <span class="label">Villettaz, Killias i Zoder (2006) · 27 comparacions</span>
+          <div class="cells" id="cells"></div>
+          <div class="legend"><span><i style="background:var(--green)"></i>2 menys reincidència</span><span><i style="background:var(--sheet-2)"></i>14 sense diferència</span><span><i style="background:var(--red)"></i>11 més reincidència</span></div>
+        </div>
+        <p class="cite step" data-step="5" style="font-size:var(--t-sm)">Nagin, Cullen i Jonson (2009): 6 estudis experimentals o quasi experimentals, 11 d'aparellament i 31 de regressió. Efecte <strong>nul o lleugerament criminogen</strong>.</p>
+        <div class="step" data-step="6" style="padding:10px 6px"><span class="stamp" style="font-size:var(--t-xl)">No redueix<br>la reincidència</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Revisions sistemàtiques</h3>
+    <ul>
+      <li><em>Gendreau, Goggin, Cullen i Andrews (2000)</em>: +7 % de reincidència amb presó; amb l'efecte ponderat, 0. «Clearly, the prison deterrent hypothesis is not supported» (p. 13).</li>
+      <li><em>Smith, Goggin i Gendreau (2002)</em>: estudis d'alta qualitat, +11 %; ponderat, +8 %.</li>
+      <li><em>Villettaz, Killias i Zoder (2006)</em>: 23 estudis, 27 comparacions: 2 a favor de la presó, 11 en contra, 14 sense diferència. Metaanàlisi de 4 controlats + 1 natural: cap diferència significativa.</li>
+      <li><em>Nagin, Cullen i Jonson (2009)</em>: nul o lleugerament criminogen.</li>
+      <li><em>Jonson (2010)</em>: 57 estudis, +14 %; màxima qualitat, +5 %. Les condicions més dures s'associen a <em>més</em> reincidència, al contrari del que prediu la dissuasió.</li>
+    </ul>
+    <div class="warn">Honestedat de Cullen (p. 58S): la recerca no és extensa ni sempre d'alta qualitat. Però «the weight of the evidence falls clearly on one side». Feu notar que cap punt cau a l'esquerra del zero.</div>
+    <h4>Dinàmica</h4>
+    <p>Abans de revelar els punts: «On creieu que caurà Jonson (2010)?» Assenyaleu la zona verda (esquerra) i deixeu que voti la sala.</p>
+  </div>
+</section>
+
+<!-- ============ 13 HOSPITAL ============ -->
+<section class="slide" id="hospital" data-title="L'hospital" data-cat="Síntesi">
+  <div class="slide-inner flex flex-col gap-7">
+    <div class="folio"><span><b>Foli 13</b> · La metàfora de l'hospital</span><span>Cullen et al., pp. 58S–59S</span></div>
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] items-start">
+      <div class="flex flex-col gap-6" id="hosp">
+        <p class="hosp-text">Imagineu un sistema <span class="swap" data-a="sanitari" data-b="penal">sanitari</span> que <span class="swap" data-a="hospitalitza" data-b="empresona">hospitalitza</span> massivament <span class="swap" data-a="pacients" data-b="infractors">pacients</span> sense saber si en sortiran <span class="swap" data-a="curats" data-b="rehabilitats">curats</span>, igual o <span class="swap" data-a="més malalts" data-b="més delinqüents">més malalts</span>. Uns diuen que l'<span class="swap" data-a="hospital" data-b="presó">hospital</span> els millora; d'altres, que els exposa a <span class="swap" data-a="infeccions" data-b="factors criminògens">infeccions</span>. La recerca és escassa, però ningú no dubta: els responsables tenen la «intuïció visceral» que funciona.</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button type="button" class="btn btn-red" id="swap-btn" aria-pressed="false">Canvia «hospital» per «presó»</button>
+          <span class="cite">Adaptació pròpia del text de la p. 58S</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-4 step" data-step="1">
+        <div class="grid grid-cols-2 gap-0 border-2" style="border-color:var(--ink)">
+          <div class="p-4" style="background:var(--sheet)"><span class="label">Medicina</span></div>
+          <div class="p-4" style="background:var(--ink);color:var(--sheet)"><span class="label" style="color:#C9C2B2">Política criminal</span></div>
+          <div class="p-4 border-t-2" style="border-color:var(--ink);background:var(--sheet);font-size:var(--t-sm)">Assaig clínic abans d'aprovar el tractament</div>
+          <div class="p-4 border-t-2" style="border-color:var(--sheet-2);background:var(--ink);color:var(--sheet);font-size:var(--t-sm)">Reforma per «sentit comú»</div>
+          <div class="p-4 border-t-2" style="border-color:var(--ink);background:var(--sheet);font-size:var(--t-sm)">Si empitjora el pacient, es retira</div>
+          <div class="p-4 border-t-2" style="border-color:var(--sheet-2);background:var(--ink);color:var(--sheet);font-size:var(--t-sm)">Si empitjora, s'apuja la dosi</div>
+          <div class="p-4 border-t-2" style="border-color:var(--ink);background:var(--sheet);font-size:var(--t-sm)">Mala praxi: demandes</div>
+          <div class="p-4 border-t-2" style="border-color:var(--sheet-2);background:var(--ink);color:var(--sheet);font-size:var(--t-sm)">Cap rendició de comptes</div>
+        </div>
+        <p class="step" data-step="2" style="margin:0;font-size:var(--t-lg);line-height:1.2">En medicina en diríem <strong style="color:var(--red)">xarlataneria</strong>. Cullen en diu <i>correctional quackery</i>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Conclusió de l'article: «The high cost of ignoring science»</h3>
+    <p>p. 58S: un sistema mèdic que hospitalitza malalts greus i lleus sense saber si en sortiran curats; la recerca és dispersa i dolenta; els responsables tenen una «gut-level feeling». p. 59S: «the public would call those in the medical profession quacks». Substituïu «hospitalització» per «empresonament» i tindreu la política correccional actual.</p>
+    <h4>Matisos que fa Cullen</h4>
+    <ul>
+      <li>Inclou els criminòlegs en la crítica: també han afirmat amb poques dades que la presó és criminògena. Però «few people listen to them» i no decideixen sobre la vida de ningú (p. 59S).</li>
+      <li>La decisió d'empresonar és complexa (gravetat, culpabilitat, valors comunitaris), però «science should be one factor» (p. 59S).</li>
+      <li>Última frase: «correctional quackery» (Latessa, Cullen i Gendreau, 2002).</li>
+    </ul>
+    <h4>Pregunta socràtica</h4>
+    <p>«Qui hauria d'avaluar si la reforma de 2026 funciona? Amb quines dades, i en quant de temps?»</p>
+  </div>
+</section>
+
+<!-- ============ 14 DILEMA ============ -->
+<section class="slide" id="dilema" data-title="Qui va a presó?" data-cat="Síntesi">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 14</b> · Cas pràctic</span><span>Tres casos després de la reforma</span></div>
+    <h2 class="h-title">Quina resposta penal <em>és adequada?</em></h2>
+    <div class="tablist" role="tablist" aria-label="Casos" data-tabs="casos">
+      <button type="button" class="tab" role="tab" aria-selected="true" data-tab="k1">Cas 1 · Infractor primari</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="k2">Cas 2 · Multireincident</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="k3">Cas 3 · Receptació</button>
+    </div>
+    <div data-panels="casos">
+      <div data-panel="k1" class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start">
+        <div class="sheet flex flex-col gap-3">
+          <span class="tag tag-green self-start">Perfil de baix risc</span>
+          <p style="margin:0;font-size:var(--t-lg);line-height:1.3">19 anys. Primer furt: un mòbil de 180 € en una terrassa. Cursa un cicle formatiu i treballa els caps de setmana.</p>
+          <div class="flex flex-wrap gap-3 mt-2" data-choice-group="k1">
+            <button type="button" class="btn" data-choice="a">Presó</button>
+            <button type="button" class="btn" data-choice="b">Suspensió amb condicions</button>
+            <button type="button" class="btn" data-choice="c">Reparació a la víctima</button>
+          </div>
+        </div>
+        <div id="k1-answer" hidden class="answer sheet flex flex-col gap-3" style="border-color:var(--green)">
+          <span class="label" style="color:var(--green)">L'anàlisi</span>
+          <p style="margin:0">És el perfil a qui <strong>la presó més perjudica</strong>: Smith i Gendreau (2010) i la tercera conclusió de Cullen. L'ingrés comportaria la pèrdua de la formació i la feina (Sampson i Laub) i l'estigma de l'etiqueta. Una resposta comunitària amb reparació preserva els vincles que afavoreixen el desistiment.</p>
+          <p class="cite">Amb la reforma, encara que la pena se suspengui, l'antecedent per delicte menys greu consta durant anys (foli 03).</p>
+        </div>
+      </div>
+      <div data-panel="k2" hidden class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start">
+        <div class="sheet flex flex-col gap-3">
+          <span class="tag tag-red self-start">Perfil d'alt risc</span>
+          <p style="margin:0;font-size:var(--t-lg);line-height:1.3">34 anys. Una quarantena de detencions per furts al metro. Ven els terminals a una xarxa de receptació. Consum problemàtic de cocaïna.</p>
+          <div class="flex flex-wrap gap-3 mt-2" data-choice-group="k2">
+            <button type="button" class="btn" data-choice="a">Presó</button>
+            <button type="button" class="btn" data-choice="b">Supervisió intensiva i tractament</button>
+            <button type="button" class="btn" data-choice="c">Multa</button>
+          </div>
+        </div>
+        <div id="k2-answer" hidden class="answer sheet flex flex-col gap-3" style="border-color:var(--red)">
+          <span class="label" style="color:var(--red)">L'anàlisi</span>
+          <p style="margin:0">Aquí l'argument del rol A és més fort: Cullen admet que hi ha infractors d'alt risc que requereixen custòdia (p. 49S) i la incapacitació funciona mentre dura. Però <strong>en sortirà</strong>: sense un tractament adequat de l'addicció, la presó n'augmenta el risc (Smith i Gendreau). Dins o fora, cal un programa basat en l'evidència.</p>
+          <p class="cite">Si no s'actua sobre la xarxa que adquireix els terminals, un altre n'ocuparà el lloc.</p>
+        </div>
+      </div>
+      <div data-panel="k3" hidden class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start">
+        <div class="sheet flex flex-col gap-3">
+          <span class="tag tag-blue self-start">El mercat</span>
+          <p style="margin:0;font-size:var(--t-lg);line-height:1.3">Un establiment de reparacions adquireix uns dos-cents mòbils robats al mes i en comercialitza les peces.</p>
+          <div class="flex flex-wrap gap-3 mt-2" data-choice-group="k3">
+            <button type="button" class="btn" data-choice="a">Agreujar encara més la pena del furt</button>
+            <button type="button" class="btn" data-choice="b">Investigar i tancar el local</button>
+          </div>
+        </div>
+        <div id="k3-answer" hidden class="answer sheet flex flex-col gap-3" style="border-color:var(--blue)">
+          <span class="label" style="color:var(--blue)">L'anàlisi</span>
+          <p style="margin:0">Aquesta és la palanca amb més rendiment: <strong>sense comprador, el furt deixa de ser rendible</strong> per a desenes de persones alhora. És la teoria de l'elecció racional aplicada al benefici, no a la pena. El delicte és la receptació (art. 298 CP), i la reforma del furt no hi toca res.</p>
+          <p class="cite">Cullen, p. 61S: saber «on i per què» es concentren els delictes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tnote">
+    <h3>Dilema final</h3>
+    <p>Feu votar cada cas a mà alçada abans de clicar. No hi ha una resposta «correcta» única: l'objectiu és que apliquin el principi de risc.</p>
+    <ul>
+      <li><em>Àlex</em>: conclusió 3 de Cullen (p. 60S): «it is essential to screen offenders for their risk level and to be cautious about imprisoning those not deeply entrenched in a criminal career».</li>
+      <li><em>Marc</em>: p. 49S: «high-risk offenders exist and, due to their strong criminal propensities, warrant a custodial placement». p. 60S–61S: rehabilitació basada en l'evidència per als d'alt risc, també dins la presó.</li>
+      <li><em>Receptació</em>: art. 298 CP. Connecta amb la baula 3 del foli 09.</li>
+    </ul>
+    <h4>Pregunta socràtica</h4>
+    <p>«La reforma tracta igual l'Àlex i en Marc: 1–3 anys per a tots dos. Té sentit des del principi de risc?»</p>
+  </div>
+</section>
+
+<!-- ============ 15 CONCLUSIONS ============ -->
+<section class="slide" id="conclusions" data-title="Conclusions" data-cat="Síntesi">
+  <div class="slide-inner flex flex-col gap-6">
+    <div class="folio"><span><b>Foli 15</b> · El que sabem</span><span>Cullen et al., pp. 60S–61S</span></div>
+    <div class="grid gap-8 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
+      <div class="flex flex-col gap-4">
+        <span class="label">Tres conclusions, amb el seu grau de confiança</span>
+        <div class="sheet grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center step" data-step="1">
+          <div><p style="margin:0;font-size:var(--t-lg);font-weight:600;line-height:1.2">La presó no té efecte dissuasiu específic.</p><span class="cite">«Amb certa confiança»</span></div>
+          <span class="conf" aria-label="Confiança alta"><i class="f"></i><i class="f"></i><i class="f"></i></span>
+        </div>
+        <div class="sheet grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center step" data-step="2">
+          <div><p style="margin:0;font-size:var(--t-lg);font-weight:600;line-height:1.2">La presó, sobretot si és gratuïtament dura, pot ser criminògena.</p><span class="cite">«Amb menys confiança»</span></div>
+          <span class="conf" aria-label="Confiança mitjana"><i class="f"></i><i class="f"></i><i></i></span>
+        </div>
+        <div class="sheet grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center step" data-step="3">
+          <div><p style="margin:0;font-size:var(--t-lg);font-weight:600;line-height:1.2">Qui més empitjora és el delinqüent de baix risc.</p><span class="cite">«Evidència molt limitada, però probable»</span></div>
+          <span class="conf" aria-label="Confiança baixa"><i class="f"></i><i></i><i></i></span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-5 step" data-step="4">
+        <span class="label">Què proposen</span>
+        <ol class="flex flex-col gap-3" style="list-style:none;padding:0;margin:0">
+          <li class="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span class="effect-num" style="font-size:var(--t-xl)">1</span><span>Les sancions comunitàries també castiguen. La presó, com a <strong>últim recurs</strong>.</span></li>
+          <li class="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span class="effect-num" style="font-size:var(--t-xl)">2</span><span>Per als d'alt risc, rehabilitació basada en l'evidència, també dins la presó.</span></li>
+          <li class="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><span class="effect-num" style="font-size:var(--t-xl)">3</span><span>Invertir en prevenció situacional, policia orientada a problemes i intervenció primerenca.</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="step" data-step="5" style="border-top:2px solid var(--ink);padding-top:clamp(16px,3vh,36px)">
+      <p class="quote-final">«Les presons no tenen poders especials per apartar els infractors del delicte. Haurien de ser una sanció d'<span style="color:var(--red)">últim recurs</span>, no de primer recurs.»</p>
+      <p class="cite mt-3">Cullen, Jonson i Nagin (2011), p. 60S</p>
+    </div>
+    <div class="step flex flex-wrap items-center gap-5" data-step="6">
+      <p style="margin:0;font-size:var(--t-lg);font-weight:600">Qüestió final: la reforma reduirà el furt de telèfons mòbils?</p>
+      <a href="#cas" class="btn" data-goto="cas">Tornar a la votació inicial</a>
+    </div>
+    <details class="refs">
+      <summary>Referències</summary>
+      <ul style="list-style:none;padding:0;margin-top:.8em">
+        <li>Cid, J. i Larrauri, E. (2023). Epígraf 4.2, pp. 29–31 i nota 10. Manual de l'assignatura.</li>
+        <li>Cullen, F. T., Jonson, C. L. i Nagin, D. S. (2011). Prisons do not reduce recidivism: The high cost of ignoring science. <i>The Prison Journal, 91</i>(3 supl.), 48S–65S. https://doi.org/10.1177/0032885511415224</li>
+        <li>Wilson, J. Q. i Kelling, G. L. (1982). Broken windows: The police and neighborhood safety. <i>The Atlantic Monthly</i>, 249(3), 29–38.</li>
+        <li>Estudis citats a través de Cullen et al. (2011): Chiricos et al. (2007); Gendreau et al. (2000); Jonson (2010); Langan i Levin (2002); Nagin, Cullen i Jonson (2009); Nagin i Snodgrass (2010); Nieuwbeerta, Nagin i Blokland (2009); Petrosino, Turpin-Petrosino i Guckenburg (2010); Sampson i Laub (1993); Smith i Gendreau (2010); Smith, Goggin i Gendreau (2002); Spohn i Holleran (2002); Villettaz, Killias i Zoder (2006).</li>
+      </ul>
+    </details>
+  </div>
+  <div class="tnote">
+    <h3>Tancament</h3>
+    <h4>Les tres conclusions (p. 60S), literals</h4>
+    <ul>
+      <li>«With some confidence, we can conclude that, across all offenders, prisons do not have a specific deterrent effect.»</li>
+      <li>«With less confidence, we can propose that prisons, especially gratuitously painful ones, may be criminogenic.»</li>
+      <li>«Although the evidence is very limited, it is likely that low-risk offenders are most likely to experience increased recidivism due to incarceration.»</li>
+    </ul>
+    <h4>Resum oral proposat</h4>
+    <p>Cullen, Jonson i Nagin revisen cinc estudis clau i metaanàlisis de més de cinquanta investigacions i en treuen tres coses: (1) la presó destrueix l'estabilitat laboral (Sampson i Laub) i fa reincidir entre un 5 % i un 14 % més que les sancions alternatives (Jonson, 2010); (2) passa fins i tot en presons humanes i amb condemnes curtes, com a Holanda (Nieuwbeerta); (3) a qui més perjudica és al delinqüent de baix risc (Smith i Gendreau). Per això, legislar per «sentit comú» sense evidència és xarlataneria correccional, i aquests diners s'haurien d'invertir en certesa, prevenció situacional i sancions comunitàries.</p>
+    <h4>Tornar a la votació</h4>
+    <p>Repetiu la votació del foli 02. Si el resultat no canvia, pregunteu per què: això és exactament la paradoxa del seminari.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const slides = $$('.slide');
+  const body = document.body;
+  let current = 0;
+
+  /* ---------- Nav ---------- */
+  const navList = $('#nav-list');
+  slides.forEach((s, i) => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + s.id;
+    a.className = 'nav-item';
+    a.innerHTML = '<span class="nav-dot"></span><span class="nav-label">' + String(i+1).padStart(2,'0') + ' · ' + s.dataset.title + '</span>';
+    a.addEventListener('click', e => { e.preventDefault(); go(i); });
+    li.appendChild(a); navList.appendChild(li);
+  });
+  const navItems = $$('.nav-item');
+
+  function go(i){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    slides[i].scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'});
+  }
+
+  function updateScroll(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const p = max > 0 ? Math.min(1, scrollY / max) : 0;
+    $('#nav .fill').style.height = (p*100) + '%';
+    $('#topbar span').style.width = (p*100) + '%';
+    const mid = innerHeight * 0.42;
+    let idx = 0;
+    slides.forEach((s, i) => { if (s.getBoundingClientRect().top <= mid) idx = i; });
+    if (idx !== current || !navItems[idx].classList.contains('active')) {
+      current = idx;
+      navItems.forEach((n, i) => { n.classList.toggle('active', i === idx); n.classList.toggle('done', i < idx); });
+      renderNotes(); updateStepCount(); updateMiniTimer();
+    }
+  }
+  let ticking = false;
+  addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(() => { updateScroll(); ticking = false; }); } }, {passive:true});
+  addEventListener('resize', updateScroll);
+
+  /* ---------- Steps ---------- */
+  function stepsOf(s){ return $$('[data-step]', s).filter(e => e.classList.contains('step')); }
+  function pendingSteps(s){ return stepsOf(s).filter(e => !e.classList.contains('on')); }
+  function reveal(el){
+    el.classList.add('on');
+    if (el.querySelector('#cells')) lightCells();
+  }
+  function next(){
+    const s = slides[current];
+    const pend = body.classList.contains('show-all') ? [] : pendingSteps(s);
+    if (pend.length){
+      const n = Math.min(...pend.map(e => +e.dataset.step));
+      const group = pend.filter(e => +e.dataset.step === n);
+      group.forEach(reveal);
+      const r = group[0].getBoundingClientRect();
+      if (r.bottom > innerHeight - 40 || r.top < 0) group[0].scrollIntoView({behavior: reduce?'auto':'smooth', block:'nearest'});
+      updateStepCount();
+    } else {
+      go(current + 1);
+    }
+  }
+  function prev(){ go(current - 1); }
+  function updateStepCount(){
+    const all = stepsOf(slides[current]);
+    const el = $('#stepcount');
+    if (!all.length || body.classList.contains('show-all')) { el.textContent = String(current+1).padStart(2,'0') + '/' + slides.length; return; }
+    const groups = new Set(all.map(e => e.dataset.step));
+    const done = new Set(all.filter(e => e.classList.contains('on')).map(e => e.dataset.step));
+    el.textContent = String(current+1).padStart(2,'0') + '/' + slides.length + ' · pas ' + done.size + '/' + groups.size;
+  }
+  document.addEventListener('click', e => {
+    const st = e.target.closest('.step');
+    if (st && !st.classList.contains('on') && !body.classList.contains('show-all')) {
+      e.preventDefault(); e.stopPropagation();
+      const s = st.closest('.slide');
+      const n = +st.dataset.step;
+      stepsOf(s).filter(x => +x.dataset.step <= n).forEach(reveal);
+      updateStepCount();
+    }
+  }, true);
+
+  /* ---------- Keyboard ---------- */
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input, textarea, select')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (!$('#help').hidden && (k === 'Escape' || k === '?')) { toggleHelp(false); e.preventDefault(); return; }
+    if (k === 'ArrowDown' || k === 'PageDown' || k === ' ' || k === 'ArrowRight') {
+      if (k === ' ' && e.target.closest('button, a, summary')) return;
+      e.preventDefault(); next();
+    }
+    else if (k === 'ArrowUp' || k === 'PageUp' || k === 'ArrowLeft') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); go(0); }
+    else if (k === 'End') { e.preventDefault(); go(slides.length - 1); }
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'a' || k === 'A') toggleAll();
+    else if (k === 'f' || k === 'F') toggleFs();
+    else if (k === 't' || k === 'T') timerToggle();
+    else if (k === '?' || k === 'h' || k === 'H') toggleHelp();
+    else if (k === 'Escape' && $('#notes').classList.contains('open')) toggleNotes(false);
+  });
+
+  /* ---------- Dock ---------- */
+  $('#btn-next').addEventListener('click', next);
+  $('#btn-prev').addEventListener('click', prev);
+  $('#btn-all').addEventListener('click', () => toggleAll());
+  $('#btn-notes').addEventListener('click', () => toggleNotes());
+  $('#notes-close').addEventListener('click', () => toggleNotes(false));
+  $('#btn-fs').addEventListener('click', toggleFs);
+  $('#btn-help').addEventListener('click', () => toggleHelp());
+  $('#help-close').addEventListener('click', () => toggleHelp(false));
+  $('#help').addEventListener('click', e => { if (e.target.id === 'help') toggleHelp(false); });
+
+  function toggleAll(force){
+    const on = typeof force === 'boolean' ? force : !body.classList.contains('show-all');
+    body.classList.toggle('show-all', on);
+    $('#btn-all').setAttribute('aria-pressed', on);
+    if (on) lightCells();
+    updateStepCount();
+  }
+  function toggleNotes(force){
+    const n = $('#notes');
+    const on = typeof force === 'boolean' ? force : !n.classList.contains('open');
+    n.classList.toggle('open', on);
+    n.setAttribute('aria-hidden', !on);
+    $('#btn-notes').setAttribute('aria-pressed', on);
+    if (on) renderNotes();
+  }
+  function renderNotes(){
+    const n = $('#notes');
+    if (!n.classList.contains('open')) return;
+    const s = slides[current];
+    const t = $('.tnote', s);
+    $('#notes-folio').textContent = 'Notes docents · Foli ' + String(current+1).padStart(2,'0') + ' · ' + s.dataset.title;
+    $('#notes-body').innerHTML = t ? t.innerHTML : '<p>Sense notes per a aquest bloc.</p>';
+    n.scrollTop = 0;
+  }
+  function toggleFs(){
+    try {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen().catch(()=>{});
+    } catch(_){}
+  }
+  function toggleHelp(force){
+    const h = $('#help');
+    const on = typeof force === 'boolean' ? force : h.hidden;
+    h.hidden = !on;
+    if (on) $('#help-close').focus();
+  }
+
+  /* ---------- Generic toggles ---------- */
+  $$('[data-toggle]').forEach(b => b.addEventListener('click', () => {
+    const t = document.getElementById(b.dataset.toggle);
+    const open = t.hidden;
+    t.hidden = !open;
+    b.setAttribute('aria-expanded', open);
+    b.classList.toggle('is-on', open);
+  }));
+
+  /* choice groups: reveal answer #<group>-answer */
+  $$('[data-choice-group]').forEach(g => {
+    const name = g.dataset.choiceGroup;
+    $$('[data-choice]', g).forEach(b => b.addEventListener('click', () => {
+      $$('[data-choice]', g).forEach(x => x.setAttribute('aria-pressed', x === b));
+      const a = document.getElementById(name + '-answer');
+      if (a) { a.hidden = false; }
+    }));
+  });
+
+  /* tabs */
+  $$('[data-tabs]').forEach(list => {
+    const name = list.dataset.tabs;
+    const panels = $('[data-panels="' + name + '"]');
+    $$('[data-tab]', list).forEach(t => t.addEventListener('click', () => {
+      $$('[data-tab]', list).forEach(x => x.setAttribute('aria-selected', x === t));
+      $$('[data-panel]', panels).forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
+    }));
+  });
+
+  /* filters */
+  $$('[data-filter-group]').forEach(g => {
+    const items = $$('[data-cat]', $('[data-filter-items="' + g.dataset.filterGroup + '"]'));
+    $$('[data-filter]', g).forEach(b => b.addEventListener('click', () => {
+      $$('[data-filter]', g).forEach(x => x.setAttribute('aria-pressed', x === b));
+      const f = b.dataset.filter;
+      items.forEach(it => it.hidden = !(f === 'tots' || it.dataset.cat === f));
+    }));
+  });
+
+  /* flip cards */
+  $$('.flip').forEach(f => f.addEventListener('click', () => {
+    if (!f.classList.contains('on') && f.classList.contains('step') && !body.classList.contains('show-all')) return;
+    f.classList.toggle('flipped');
+  }));
+
+  /* goto links */
+  $$('[data-goto]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); go(slides.findIndex(s => s.id === a.dataset.goto));
+  }));
+
+  /* ---------- Cas: slider ---------- */
+  const valor = $('#valor');
+  function fmt(n){ return n.toLocaleString('ca-ES') + ' €'; }
+  function updateValor(){
+    const v = +valor.value;
+    const p = (v - 50) / (1500 - 50) * 100;
+    valor.style.setProperty('--p', p + '%');
+    $('#valor-out').textContent = fmt(v);
+    const lim = (400 - 50) / (1450) * 100;
+    $('#valor-limit span').style.left = lim + '%';
+    const lleu = v <= 400;
+    $('#before-art').textContent = lleu ? 'Art. 234.2 CP' : 'Art. 234.1 CP';
+    $('#before-type').textContent = lleu ? 'Delicte lleu de furt' : 'Delicte de furt';
+    $('#before-pen').textContent = lleu ? "Multa d'1 a 3 mesos" : 'Presó de 6 a 18 mesos';
+    const nat = $('#before-nat');
+    nat.textContent = lleu ? 'Sanció pecuniària' : 'Privació de llibertat';
+    nat.className = 'tag ' + (lleu ? 'tag-green' : 'tag-red');
+    const bar = $('#before-bar');
+    bar.style.left = lleu ? '0%' : (6/36*100) + '%';
+    bar.style.width = lleu ? '0%' : (12/36*100) + '%';
+    $('#before-min').textContent = lleu ? 'Pena mínima de presó: 0 dies' : 'Pena mínima de presó: 6 mesos';
+  }
+  valor.addEventListener('input', updateValor);
+  updateValor();
+
+  /* tally */
+  const tally = {si:0,no:0,dep:0};
+  function renderTally(){
+    const tot = Math.max(1, tally.si + tally.no + tally.dep);
+    $$('#tally button').forEach(b => {
+      const v = tally[b.dataset.v];
+      $('.count', b).textContent = v;
+      $('.fillv', b).style.width = (v / tot * 100) + '%';
+    });
+  }
+  $$('#tally button').forEach(b => {
+    b.addEventListener('click', () => { tally[b.dataset.v]++; renderTally(); });
+    b.addEventListener('contextmenu', e => { e.preventDefault(); tally[b.dataset.v] = Math.max(0, tally[b.dataset.v]-1); renderTally(); });
+  });
+
+  /* ---------- Palanques ---------- */
+  const captions = {
+    legislador: "Intensitat amb què s'utilitza cada palanca · esquema qualitatiu",
+    evidencia: "Efecte dissuasiu segons l'evidència · esquema qualitatiu",
+    cost: "Cost pressupostari immediat · esquema qualitatiu"
+  };
+  const fxNotes = {
+    legislador: "Reforma de 2026: només s'incrementa la severitat.",
+    evidencia: "Evidència: augmentar la certesa dissuadeix més que augmentar la severitat.",
+    cost: "Pressupost: la variable més eficaç és també la més costosa."
+  };
+  function setMode(m){
+    $$('#lever-tabs .tab').forEach(t => t.setAttribute('aria-selected', t.dataset.mode === m));
+    $('#lever-caption').textContent = captions[m];
+    $('#fx-note').textContent = fxNotes[m];
+    $$('#levers .lever').forEach(l => {
+      $('.lvl', l).style.setProperty('--h', l.dataset[m] + '%');
+      $('.lever-txt', l).textContent = $('.lever-txt', l).dataset[m];
+      const hot = (m === 'legislador' && l.dataset.k === 'severitat') || (m === 'evidencia' && l.dataset.k === 'certesa') || (m === 'cost' && l.dataset.k === 'certesa');
+      l.classList.toggle('hot', hot);
+    });
+    $$('#equation .fx-term.v').forEach(v => v.classList.toggle('hl', (m === 'legislador' && v.dataset.v === 'severitat') || (m !== 'legislador' && v.dataset.v === 'certesa')));
+  }
+  $$('#lever-tabs .tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+  setMode('legislador');
+
+  /* ---------- Rols: timer ---------- */
+  let remaining = 20*60, running = false, timerId = null;
+  function fmtT(s){ const m = Math.floor(Math.abs(s)/60), r = Math.abs(s)%60; return (s<0?'-':'') + String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); }
+  function renderTimer(){
+    const t = $('#timer'); t.textContent = fmtT(remaining);
+    t.classList.toggle('urgent', remaining <= 120);
+    const mt = $('#mini-timer'); mt.textContent = fmtT(remaining); mt.classList.toggle('urgent', remaining <= 120);
+    $('#timer-toggle').textContent = running ? 'Atura' : (remaining === 20*60 ? 'Inicia' : 'Continua');
+    updateMiniTimer();
+  }
+  function updateMiniTimer(){
+    const mt = $('#mini-timer');
+    mt.hidden = !(running || (remaining !== 20*60)) || slides[current].id === 'rols';
+  }
+  function timerToggle(){
+    running = !running;
+    if (running) {
+      timerId = setInterval(() => { remaining--; renderTimer(); if (remaining === 0) flash(); }, 1000);
+    } else clearInterval(timerId);
+    renderTimer();
+  }
+  function flash(){
+    const t = $('#timer');
+    t.animate && t.animate([{opacity:1},{opacity:.2},{opacity:1}], {duration:600, iterations:4});
+  }
+  $('#timer-toggle').addEventListener('click', timerToggle);
+  $('#timer-plus').addEventListener('click', () => { remaining += 60; renderTimer(); });
+  $('#timer-reset').addEventListener('click', () => { running = false; clearInterval(timerId); remaining = 20*60; renderTimer(); });
+  $('#mini-timer').addEventListener('click', () => go(slides.findIndex(s => s.id === 'rols')));
+  renderTimer();
+
+  /* ---------- Socratic ---------- */
+  const qs = [
+    "Si la pena no dissuadeix gaire, per què la majoria de la gent no furta mòbils?",
+    "Qui guanya amb aquesta reforma? I qui hi perd?",
+    "Si el problema era el llindar dels 400 €, calia arribar a la presó?",
+    "Quantes places de presó calen si s'empresona cada furt de mòbil? Qui les paga?",
+    "Aprovaríeu un medicament només perquè «sembla lògic» que funcioni?"
+  ];
+  let qi = 0;
+  $('#soc-next').addEventListener('click', () => { qi = (qi + 1) % qs.length; $('#soc-q').textContent = qs[qi]; });
+
+  /* ---------- Alternatives flow ---------- */
+  $$('#flow .flow-node').forEach(n => n.addEventListener('click', () => {
+    $$('#flow .flow-node').forEach(x => x.setAttribute('aria-selected', x === n));
+    $$('[data-node-panel]').forEach(p => p.hidden = p.dataset.nodePanel !== n.dataset.node);
+  }));
+
+  /* ---------- Xifres ---------- */
+  const guess = $('#guess');
+  guess.addEventListener('input', () => {
+    guess.style.setProperty('--p', guess.value + '%');
+    $('#guess-out').textContent = guess.value + ' %';
+    $('#guess-bar').style.width = guess.value + '%';
+  });
+  $('#reveal-bars').addEventListener('click', () => {
+    $$('#bars .val').forEach((v, i) => setTimeout(() => v.style.width = v.dataset.w + '%', reduce ? 0 : i*180));
+    $('#reveal-bars').classList.add('is-on');
+  });
+
+  /* ---------- Dot plot ---------- */
+  const MIN = -10, MAX = 15;
+  const pos = v => (v - MIN) / (MAX - MIN) * 100;
+  const axis = $('#dp-axis');
+  [-10,-5,0,5,10,15].forEach(t => {
+    const s = document.createElement('span');
+    s.style.left = pos(t) + '%';
+    s.textContent = (t > 0 ? '+' : '') + t + ' %';
+    if (t === 0) { s.style.color = 'var(--ink)'; s.style.fontWeight = '600'; }
+    axis.appendChild(s);
+  });
+  $$('#dotplot .dp-row[data-v]').forEach(row => {
+    const v = +row.dataset.v;
+    const tr = $('.dp-track', row);
+    tr.innerHTML = '<span class="dp-left" style="width:' + pos(0) + '%"></span>' +
+      [-10,-5,5,10,15].map(t => '<span class="dp-grid" style="left:' + pos(t) + '%"></span>').join('') +
+      '<span class="dp-zero" style="left:calc(' + pos(0) + '% - 1.5px)"></span>' +
+      '<span class="dp-dot" style="left:' + pos(v) + '%"></span>' +
+      '<span class="dp-val" style="left:' + pos(v) + '%;color:' + (v > 0 ? 'var(--red)' : 'var(--ink)') + '">' + (v > 0 ? '+' : '±') + v + ' %</span>';
+  });
+
+  /* Villettaz cells */
+  const cells = $('#cells');
+  const kinds = [].concat(Array(2).fill('g'), Array(14).fill('n'), Array(11).fill('r'));
+  kinds.forEach((k, i) => { const c = document.createElement('span'); c.className = 'cell ' + k; c.style.setProperty('--d', (reduce ? 0 : i*0.04) + 's'); cells.appendChild(c); });
+  function lightCells(){ cells.classList.add('lit'); }
+
+  /* ---------- Hospital swap ---------- */
+  $('#swap-btn').addEventListener('click', e => {
+    const b = e.currentTarget;
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', on);
+    b.textContent = on ? 'Torna a «hospital»' : 'Canvia «hospital» per «presó»';
+    $('#hosp').classList.toggle('prison-mode', on);
+    $$('#hosp .swap').forEach((s, i) => {
+      setTimeout(() => {
+        s.style.opacity = 0;
+        setTimeout(() => { s.textContent = on ? s.dataset.b : s.dataset.a; s.style.opacity = 1; }, reduce ? 0 : 180);
+      }, reduce ? 0 : i * 90);
+    });
+  });
+
+  /* ---------- Init ---------- */
+  const h = location.hash.replace('#','');
+  if (h) { const i = slides.findIndex(s => s.id === h); if (i > 0) setTimeout(() => slides[i].scrollIntoView({block:'start'}), 50); }
+  updateScroll();
+})();
+</script>
+</body>
+</html>
