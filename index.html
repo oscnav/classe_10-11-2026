@@ -44,7 +44,8 @@
   --ease:cubic-bezier(.2,.7,.2,1);
   color-scheme:light;
 }
-html{background:var(--paper);scroll-behavior:smooth;scroll-snap-type:y proximity}
+html{background:var(--paper);scroll-behavior:smooth;scroll-snap-type:y proximity;scrollbar-width:none;-ms-overflow-style:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--t-base);line-height:1.35;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--paper)}
 ::selection{background:var(--red);color:var(--sheet)}
@@ -79,6 +80,8 @@ button{cursor:pointer}
 .btn-red{border-color:var(--red);color:var(--red);box-shadow:4px 4px 0 var(--red)}
 .btn-red:hover{box-shadow:6px 6px 0 var(--red)}
 .btn-red[aria-pressed="true"],.btn-red.is-on{background:var(--red);color:var(--sheet)}
+.btn-choice{text-transform:none;letter-spacing:0;font-family:var(--f-body);font-weight:600;white-space:nowrap}
+.qa-grid:has(#susp-answer[hidden]){grid-template-columns:minmax(0,1fr)!important}
 .btn-ghost{box-shadow:none;border-width:1.5px;font-size:var(--t-xs);padding:.45em .8em}
 .btn-ghost:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--sheet)}
 .chip{font-family:var(--f-mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);padding:.3em .7em;background:transparent;color:var(--ink);transition:all .3s var(--ease)}
@@ -126,16 +129,16 @@ body:not(.show-all) .step:not(.on) *{pointer-events:none}
 #nav .track{position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--rule)}
 #nav .fill{position:absolute;left:0;top:0;width:100%;background:var(--red);height:0;transition:height .15s linear}
 #nav ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(6px,1.25vh,14px);position:relative}
-.nav-item{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-family:var(--f-mono);font-size:14px;letter-spacing:.06em}
+.nav-item{display:flex;align-items:center;gap:12px;position:relative;width:24px;text-decoration:none;color:var(--ink);font-family:var(--f-mono);font-size:14px;letter-spacing:.06em}
 .nav-dot{width:24px;height:24px;display:grid;place-items:center;flex:none}
 .nav-dot::before{content:"";width:9px;height:9px;background:var(--paper);border:2px solid var(--ink-3);transition:all .3s var(--ease)}
 .nav-item.done .nav-dot::before{background:var(--ink-3);border-color:var(--ink-3)}
 .nav-item.active .nav-dot::before{width:16px;height:16px;background:var(--red);border-color:var(--red);transform:rotate(45deg)}
-.nav-label{opacity:0;transform:translateX(-6px);transition:all .3s var(--ease);background:var(--ink);color:var(--sheet);padding:3px 9px;white-space:nowrap;pointer-events:none}
+.nav-label{position:absolute;left:34px;top:50%;margin-top:-.8em;opacity:0;transform:translateX(-6px);transition:all .3s var(--ease);background:var(--ink);color:var(--sheet);padding:3px 9px;white-space:nowrap;pointer-events:none}
 .nav-num{width:22px;color:var(--ink-3);font-size:12px;text-align:right;display:none}
-#nav:hover .nav-label,.nav-item:focus-visible .nav-label{opacity:1;transform:none}
+.nav-item:hover .nav-label,.nav-item:focus-visible .nav-label{opacity:1;transform:none}
 .nav-item.active .nav-label{opacity:1;transform:none;background:var(--red)}
-#nav:not(:hover) .nav-item.active .nav-label{opacity:0}
+.nav-item.active:not(:hover):not(:focus-visible) .nav-label{opacity:0}
 #topbar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:5px;z-index:55;background:var(--sheet-2)}
 #topbar span{display:block;height:100%;width:0;background:var(--red);transition:width .15s linear}
 @media (min-width:900px){#topbar{display:none}}
@@ -324,6 +327,51 @@ body:not(.show-all) .step:not(.on) *{pointer-events:none}
 details.refs summary{cursor:pointer;font-family:var(--f-mono);font-size:var(--t-sm);text-transform:uppercase;letter-spacing:.08em}
 details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-left:1.6em;text-indent:-1.6em}
 
+
+/* ---------- Portada: telèfon amb etiqueta ---------- */
+.cover-grid{align-items:center;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.stage{perspective:1800px;height:min(66vh,640px);min-height:440px;display:grid;place-items:center;position:relative}
+.phone-wrap{transform-style:preserve-3d;margin-right:clamp(90px,10vw,180px);animation:phone-in 1.4s var(--ease) both}
+@keyframes phone-in{from{opacity:0;transform:translateY(30px) rotateY(-35deg)}to{opacity:1;transform:none}}
+.phone{--rx:6deg;--ry:-20deg;width:min(250px,44vw);aspect-ratio:9/19.3;position:relative;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .7s var(--ease)}
+.phone .layer{position:absolute;inset:0;border-radius:14%/6.6%;background:#3A3631;transform:translateZ(calc(var(--i) * -1.4px))}
+.phone .layer:nth-child(even){background:#2B2824}
+.phone .front{position:absolute;inset:0;border-radius:14%/6.6%;background:#0E0D0B;padding:3.2%;transform:translateZ(1px);backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 0 0 1.5px #5A5449,inset 0 0 0 3px #1A1815}
+.phone .screen{width:100%;height:100%;border-radius:11.5%/5.4%;background:linear-gradient(170deg,#25221D 0%,#171511 62%,#2C120E 100%);overflow:hidden;position:relative;color:#F2EEE5;display:flex;flex-direction:column;align-items:center;padding:17% 9% 9%;font-family:var(--f-body)}
+.phone .island{position:absolute;top:2.6%;left:50%;transform:translateX(-50%);width:30%;height:3.3%;background:#000;border-radius:99px}
+.phone .clock{font-family:var(--f-display);font-weight:700;font-stretch:88%;font-size:clamp(44px,4.6vw,72px);line-height:1;letter-spacing:-.02em}
+.phone .date{font-size:clamp(11px,.9vw,15px);opacity:.72;margin-top:.35em}
+.phone .notif{margin-top:auto;width:100%;background:rgba(242,238,229,.12);border-radius:14px;padding:10px 12px;font-size:clamp(10px,.82vw,13px);line-height:1.3;text-align:left}
+.phone .notif b{display:block;font-size:.85em;letter-spacing:.1em;text-transform:uppercase;color:#F0A196;margin-bottom:3px;font-weight:600}
+.phone .back{position:absolute;inset:0;border-radius:14%/6.6%;background:linear-gradient(150deg,#47423A,#29261F);transform:translateZ(-17.5px) rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.phone .cam{position:absolute;top:4.5%;left:8%;width:36%;aspect-ratio:1;border-radius:24%;background:#1D1B17;box-shadow:inset 0 0 0 2px #575146}
+.phone .ring{position:absolute;top:-12px;right:13%;width:24px;height:24px;margin-right:-12px;border-radius:50%;border:3.5px solid #9A927F;box-shadow:inset 0 0 0 1px #5B554B,0 0 0 1px #5B554B;transform:translateZ(-8px)}
+.hang{position:absolute;left:87%;top:0;width:0;height:0;transform-style:preserve-3d;transform:translateZ(-8px);cursor:pointer}
+.cord{position:absolute;left:0;top:0;width:150px;height:130px;overflow:visible;pointer-events:none}
+.ptag{--tw:clamp(128px,9.4vw,168px);position:absolute;left:calc(86px - var(--tw) / 2);top:96px;width:var(--tw);aspect-ratio:1/1.45;transform-origin:50% 8%;transform:rotate(4deg);transform-style:preserve-3d}
+.ptag-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1s cubic-bezier(.3,1.25,.4,1)}
+.hang.on .ptag-inner{transform:rotateY(180deg)}
+.pface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;filter:drop-shadow(0 10px 12px rgba(23,21,15,.22))}
+.pback{transform:rotateY(180deg)}
+.pshape{position:absolute;inset:0;clip-path:polygon(24% 0,76% 0,100% 11%,100% 100%,0 100%,0 11%);background:linear-gradient(180deg,#FFFEFA,#F1ECE0);color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:25% 10% 9%;gap:.4em;text-align:center}
+.pback .pshape{background:linear-gradient(180deg,#C8291D,#A81F15);color:var(--sheet)}
+.eyelet{position:absolute;top:5%;left:50%;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 3px #B3A16F,0 0 0 4px #8A7A50,inset 0 1px 2px rgba(0,0,0,.35)}
+.pt-label{font-family:var(--f-mono);font-size:clamp(10px,.72vw,13px);letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+.pt-big{font-family:var(--f-display);font-weight:900;font-size:clamp(30px,2.5vw,46px);line-height:.92;letter-spacing:-.02em}
+.pt-sub{font-size:clamp(10px,.78vw,14px);line-height:1.25;border-top:1px solid currentColor;padding-top:.45em;width:100%;opacity:.8}
+.barcode{margin-top:auto;width:84%;height:clamp(18px,1.8vw,28px);background:repeating-linear-gradient(90deg,currentColor 0 2px,transparent 2px 3px,currentColor 3px 4px,transparent 4px 7px,currentColor 7px 10px,transparent 10px 11px,currentColor 11px 12px,transparent 12px 15px)}
+.pt-code{font-family:var(--f-mono);font-size:clamp(8px,.58vw,11px);letter-spacing:.12em;opacity:.8}
+body:not(.show-all) .step.step-flip:not(.on){opacity:1;filter:none;transform:translateZ(-8px);user-select:auto;cursor:pointer}
+.agenda-strip{list-style:none;margin:clamp(18px,3.5vh,44px) 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:2px solid var(--ink)}
+.agenda-strip a{display:flex;align-items:baseline;gap:.55em;padding:.7em .8em .2em 0;text-decoration:none;color:var(--ink);transition:color .3s var(--ease)}
+.agenda-strip a:hover{color:var(--red)}
+.agenda-strip b{font-family:var(--f-display);font-weight:800;font-stretch:108%;font-size:var(--t-base);line-height:1.05}
+@media (max-width:900px){.agenda-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- Mode presentador (només amb N) ---------- */
+body:not(.presenter) #dock{display:none}
+body:not(.presenter) .presenter-only{display:none!important}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
@@ -390,23 +438,67 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
           <div><dt class="label">Marc teòric</dt><dd>Cid i Larrauri (2023), ep. 4.2 · Wilson i Kelling (1982)</dd></div>
         </dl>
       </div>
-      <nav class="agenda" aria-label="Estructura de la sessió">
-        <span class="label">Estructura de la sessió</span>
-        <ol>
-          <li><a href="#cas" data-goto="cas"><span class="ag-n">I</span><span><b>Plantejament</b><small>El supòsit de fet i la qüestió jurídica</small></span><span class="ag-f">02–03</span></a></li>
-          <li><a href="#paradoxa" data-goto="paradoxa"><span class="ag-n">II</span><span><b>Teoria</b><small>Dissuasió i experiència social de la presó</small></span><span class="ag-f">04–06</span></a></li>
-          <li><a href="#rols" data-goto="rols"><span class="ag-n">III</span><span><b>Debat</b><small>Arguments del legislador i alternatives</small></span><span class="ag-f">07–09</span></a></li>
-          <li><a href="#xifres" data-goto="xifres"><span class="ag-n">IV</span><span><b>Evidència</b><small>Estudis i revisions sistemàtiques</small></span><span class="ag-f">10–12</span></a></li>
-          <li><a href="#hospital" data-goto="hospital"><span class="ag-n">V</span><span><b>Síntesi</b><small>Cas pràctic i conclusions</small></span><span class="ag-f">13–15</span></a></li>
-        </ol>
-      </nav>
+      <div class="stage" id="stage">
+        <div class="phone-wrap">
+          <div class="phone" id="phone">
+            <span class="ring" aria-hidden="true"></span>
+            <div class="layer" style="--i:1"></div><div class="layer" style="--i:2"></div><div class="layer" style="--i:3"></div>
+            <div class="layer" style="--i:4"></div><div class="layer" style="--i:5"></div><div class="layer" style="--i:6"></div>
+            <div class="layer" style="--i:7"></div><div class="layer" style="--i:8"></div><div class="layer" style="--i:9"></div>
+            <div class="layer" style="--i:10"></div><div class="layer" style="--i:11"></div><div class="layer" style="--i:12"></div>
+            <div class="back" aria-hidden="true"><div class="cam"></div></div>
+            <div class="front" aria-hidden="true"><div class="screen">
+              <div class="island"></div>
+              <div class="clock num">10:00</div>
+              <div class="date">dimarts, 10 de novembre</div>
+              <div class="notif"><b>Codi Penal · Reforma</b>Furt de telèfon mòbil: presó d'1 a 3 anys, sigui quin sigui el valor.</div>
+            </div></div>
+            <div class="hang step step-flip" data-step="1" id="hang" role="img" aria-label="Etiqueta del telèfon: preu de 250 euros, i al revers, pena d'1 a 3 anys de presó">
+              <svg class="cord" viewBox="0 0 150 130" aria-hidden="true">
+                <path d="M-2 -9 C 28 -30, 76 -4, 86 114" stroke="#5E584C" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path d="M2 -7 C 38 -20, 84 16, 88 114" stroke="#7A7366" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="ptag"><div class="ptag-inner">
+                <div class="pface pfront">
+                  <div class="pshape">
+                    <span class="pt-label">PVP</span>
+                    <span class="pt-big num">250&nbsp;€</span>
+                    <span class="pt-sub">Telèfon mòbil<br>segona mà</span>
+                    <span class="barcode"></span>
+                    <span class="pt-code">8 437001 250006</span>
+                  </div>
+                  <span class="eyelet"></span>
+                </div>
+                <div class="pface pback">
+                  <div class="pshape">
+                    <span class="pt-label">Pena</span>
+                    <span class="pt-big">1–3<br>anys</span>
+                    <span class="pt-sub">de presó<br>CP · reforma 8.4.2026</span>
+                    <span class="barcode"></span>
+                    <span class="pt-code">ART. 234 CP</span>
+                  </div>
+                  <span class="eyelet"></span>
+                </div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <ol class="agenda-strip" aria-label="Estructura de la sessió">
+      <li><a href="#cas" data-goto="cas"><span class="ag-n">I</span><b>Plantejament</b></a></li>
+      <li><a href="#paradoxa" data-goto="paradoxa"><span class="ag-n">II</span><b>Teoria</b></a></li>
+      <li><a href="#rols" data-goto="rols"><span class="ag-n">III</span><b>Debat</b></a></li>
+      <li><a href="#xifres" data-goto="xifres"><span class="ag-n">IV</span><b>Evidència</b></a></li>
+      <li><a href="#hospital" data-goto="hospital"><span class="ag-n">V</span><b>Síntesi</b></a></li>
+    </ol>
   </div>
   <div class="tnote">
     <h3>Obertura</h3>
     <p>Pregunta guia del seminari, literal de la guia docent. Marc: Bloc III, Tema 9. Connecta amb Cid i Larrauri (2023, epígraf 4.2, pp. 29–31 i nota 10) i amb Wilson i Kelling (1982).</p>
     <h4>Metàfora clau de la lectura</h4>
     <p>«Price tag» (p. 52S): els partidaris de la dissuasió volen reduir el càstig a «una simple etiqueta de preu». Reapareix al foli 05.</p>
+    <p><em>↓ (o clic a l'etiqueta)</em> gira l'etiqueta penjada del telèfon: el preu de 250 € es converteix en «1–3 anys de presó». Un altre clic la torna a girar.</p>
     <h4>Referència</h4>
     <p>Cullen, F. T., Jonson, C. L. i Nagin, D. S. (2011). Prisons do not reduce recidivism: The high cost of ignoring science. <em>The Prison Journal, 91</em>(3 supl.), 48S–65S.</p>
     <div class="warn">El DOI de la guia està truncat. El correcte és <em>10.1177/0032885511415224</em>.</div>
@@ -494,7 +586,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
 <section class="slide" id="suspensio" data-title="La suspensió" data-cat="Plantejament">
   <div class="slide-inner flex flex-col gap-7">
     <div class="folio"><span><b>Foli 03</b> · Qüestió jurídica</span><span>Arts. 80, 86, 22.8 i 136 CP</span></div>
-    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] items-start">
+    <div class="qa-grid grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] items-start">
       <div class="flex flex-col gap-10">
         <div class="sheet flex flex-col gap-3" style="border-width:2px">
           <span class="label">Qüestió</span>
@@ -503,9 +595,9 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
         <div class="flex flex-col gap-4" data-choice-group="susp">
           <p class="label">Resposta</p>
           <div class="flex flex-wrap gap-4">
-            <button type="button" class="btn" data-choice="si">Sí, en tots els casos</button>
-            <button type="button" class="btn" data-choice="part">Només en part</button>
-            <button type="button" class="btn" data-choice="no">No</button>
+            <button type="button" class="btn btn-choice" data-choice="si">Sí, en tots els casos</button>
+            <button type="button" class="btn btn-choice" data-choice="part">Només en part</button>
+            <button type="button" class="btn btn-choice" data-choice="no">No</button>
           </div>
         </div>
       </div>
@@ -628,8 +720,8 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     <div class="sheet-soft step" data-step="3" data-choice-group="por">
       <p class="text-[length:var(--t-lg)] font-semibold" style="margin:0 0 .7em">Què fa més por a un infractor?</p>
       <div class="flex flex-wrap gap-4">
-        <button type="button" class="btn" data-choice="a">1 any de presó</button>
-        <button type="button" class="btn" data-choice="b">Una sanció llarga a la comunitat amb supervisió intensiva</button>
+        <button type="button" class="btn btn-choice" data-choice="a">1 any de presó</button>
+        <button type="button" class="btn btn-choice" data-choice="b">Una sanció llarga a la comunitat amb supervisió intensiva</button>
       </div>
       <div id="por-answer" hidden class="answer mt-4 grid gap-3 md:grid-cols-[auto_minmax(0,1fr)] items-start">
         <span class="tag tag-ink">Enquestes a infractors</span>
@@ -725,8 +817,8 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
         <div class="timer" id="timer" role="timer" aria-live="off">20:00</div>
         <div class="flex flex-wrap gap-3">
           <button type="button" class="btn btn-red" id="timer-toggle">Inicia</button>
-          <button type="button" class="btn btn-ghost" id="timer-plus">+1 min</button>
-          <button type="button" class="btn btn-ghost" id="timer-reset">Reinicia</button>
+          <button type="button" class="btn btn-ghost presenter-only" id="timer-plus">+1 min</button>
+          <button type="button" class="btn btn-ghost presenter-only" id="timer-reset">Reinicia</button>
         </div>
       </div>
     </div>
@@ -799,7 +891,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     <div class="socratic step" data-step="6">
       <span class="label">Qüestió per al debat</span>
       <q id="soc-q">Si la pena no dissuadeix gaire, per què la majoria de la gent no furta mòbils?</q>
-      <button type="button" class="btn btn-ghost" id="soc-next">Següent qüestió</button>
+      <button type="button" class="btn btn-ghost" id="soc-next" aria-label="Següent qüestió" title="Següent qüestió">→</button>
     </div>
   </div>
   <div class="tnote">
@@ -814,7 +906,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     </ul>
     <div class="warn">L'efecte de substitució (un altre ocupa el lloc del detingut en un mercat amb demanda) no és a la lectura. És un argument general de la criminologia.</div>
     <h4>Més preguntes socràtiques</h4>
-    <p>El botó «Següent qüestió» en mostra fins a cinc.</p>
+    <p>El botó → en mostra fins a cinc.</p>
   </div>
 </section>
 
@@ -924,24 +1016,25 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
           <label for="guess" class="text-[length:var(--t-base)] font-semibold">Estimació prèvia: quin percentatge torna a ser detingut en tres anys?</label>
           <input id="guess" class="range" type="range" min="0" max="100" step="1" value="40" style="--p:40%">
         </div>
-        <div><button type="button" class="btn btn-red" id="reveal-bars">Revela les dades</button></div>
         <div class="bars" id="bars">
           <div class="bar-row is-blue"><span>Estimació de l'aula</span><span class="track"><span class="val" id="guess-bar" style="width:40%"></span></span><span class="pct num" id="guess-out">40 %</span></div>
+          <div class="bars step" data-step="1" id="bars-real">
           <div class="bar-row is-red"><span>Tornen a ser detinguts</span><span class="track"><span class="val" data-w="67.5"></span></span><span class="pct num">67,5 %</span></div>
           <div class="bar-row"><span>Nova condemna</span><span class="track"><span class="val" data-w="46.9"></span></span><span class="pct num">46,9 %</span></div>
           <div class="bar-row"><span>Nova pena de presó</span><span class="track"><span class="val" data-w="25.4"></span></span><span class="pct num">25,4 %</span></div>
           <div class="bar-row"><span>Tornen a presó (nous delictes o incompliments)</span><span class="track"><span class="val" data-w="51.8"></span></span><span class="pct num">51,8 %</span></div>
+          <p class="cite" style="font-size:var(--t-sm);margin:0">Prop del <strong style="color:var(--red)">30 %</strong> ja havia estat detingut abans dels <strong>3 mesos</strong>.</p>
+          </div>
         </div>
-        <p class="cite" style="font-size:var(--t-sm)">I prop del <strong style="color:var(--red)">30 %</strong> ja havia estat detingut abans dels <strong>3 mesos</strong>.</p>
       </div>
       <div class="flex flex-col gap-5">
-        <article class="sheet flex flex-col gap-3 step" data-step="1" style="border-color:var(--red)">
+        <article class="sheet flex flex-col gap-3 step" data-step="2" style="border-color:var(--red)">
           <span class="tag tag-red self-start">Experiment natural · Florida</span>
           <h3 class="side-h" style="font-size:var(--t-lg)">Chiricos et al. (2007)</h3>
           <p style="margin:0;font-size:var(--t-sm)">Els jutges podien no formalitzar la declaració de culpabilitat si la persona complia la <i>probation</i>. <strong>95.919 persones</strong>, 2 anys: qui va rebre l'etiqueta formal de delinqüent va reincidir més.</p>
           <span class="cite">Vegeu el foli 03, tercer efecte</span>
         </article>
-        <article class="sheet-soft flex flex-col gap-3 step" data-step="2">
+        <article class="sheet-soft flex flex-col gap-3 step" data-step="3">
           <span class="tag tag-ink self-start">Revisió Campbell · 29 assajos</span>
           <p style="margin:0;font-size:var(--t-sm)">Processar joves pel sistema penal «no sembla tenir cap efecte de control del delicte. De fet, gairebé tots els resultats van ser negatius». <span class="cite">Petrosino et al. (2010)</span></p>
         </article>
@@ -955,7 +1048,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     <h4>Chiricos et al. (2007)</h4>
     <p>No és un dels «cinc estudis il·lustratius»: apareix a la introducció de l'apartat (p. 54S), dins la línia que contrasta dissuasió i etiquetatge. Mecanisme de Florida: <em>withhold adjudication</em>. Altres fonts: Rochester Youth Survey (Bernburg i Krohn, 2003) i Petrosino, Turpin-Petrosino i Guckenburg (2010).</p>
     <h4>Dinàmica</h4>
-    <p>Demaneu a la sala una xifra, poseu-la al control lliscant (barra blava) i després reveleu les dades.</p>
+    <p>Demaneu a la sala una xifra i poseu-la al control lliscant (barra blava). El pas següent (↓) revela les dades reals.</p>
   </div>
 </section>
 
@@ -998,9 +1091,9 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
             <span class="label">Predicció</span>
             <p style="margin:0;font-size:var(--t-lg);line-height:1.3">Els casos que van caure en mans dels jutges més durs, com van reincidir?</p>
             <div class="flex flex-wrap gap-3">
-              <button type="button" class="btn" data-choice="menys">Menys</button>
-              <button type="button" class="btn" data-choice="igual">Igual</button>
-              <button type="button" class="btn" data-choice="mes">Més</button>
+              <button type="button" class="btn btn-choice" data-choice="menys">Menys</button>
+              <button type="button" class="btn btn-choice" data-choice="igual">Igual</button>
+              <button type="button" class="btn btn-choice" data-choice="mes">Més</button>
             </div>
           </div>
         </div>
@@ -1080,7 +1173,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
       <div class="flex flex-col gap-6" id="hosp">
         <p class="hosp-text">Imagineu un sistema <span class="swap" data-a="sanitari" data-b="penal">sanitari</span> que <span class="swap" data-a="hospitalitza" data-b="empresona">hospitalitza</span> massivament <span class="swap" data-a="pacients" data-b="infractors">pacients</span> sense saber si en sortiran <span class="swap" data-a="curats" data-b="rehabilitats">curats</span>, igual o <span class="swap" data-a="més malalts" data-b="més delinqüents">més malalts</span>. Uns diuen que l'<span class="swap" data-a="hospital" data-b="presó">hospital</span> els millora; d'altres, que els exposa a <span class="swap" data-a="infeccions" data-b="factors criminògens">infeccions</span>. La recerca és escassa, però ningú no dubta: els responsables tenen la «intuïció visceral» que funciona.</p>
         <div class="flex flex-wrap gap-4 items-center">
-          <button type="button" class="btn btn-red" id="swap-btn" aria-pressed="false">Canvia «hospital» per «presó»</button>
+          <button type="button" class="btn btn-red" id="swap-btn" aria-pressed="false">Hospital ⇄ Presó</button>
           <span class="cite">Adaptació pròpia del text de la p. 58S</span>
         </div>
       </div>
@@ -1124,14 +1217,14 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
       <button type="button" class="tab" role="tab" aria-selected="false" data-tab="k3">Cas 3 · Receptació</button>
     </div>
     <div data-panels="casos">
-      <div data-panel="k1" class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start">
+      <div data-panel="k1" class="grid gap-5 items-start">
         <div class="sheet flex flex-col gap-3">
           <span class="tag tag-green self-start">Perfil de baix risc</span>
           <p style="margin:0;font-size:var(--t-lg);line-height:1.3">19 anys. Primer furt: un mòbil de 180 € en una terrassa. Cursa un cicle formatiu i treballa els caps de setmana.</p>
-          <div class="flex flex-wrap gap-3 mt-2" data-choice-group="k1">
-            <button type="button" class="btn" data-choice="a">Presó</button>
-            <button type="button" class="btn" data-choice="b">Suspensió amb condicions</button>
-            <button type="button" class="btn" data-choice="c">Reparació a la víctima</button>
+          <div class="flex flex-wrap gap-4 mt-2" data-choice-group="k1">
+            <button type="button" class="btn btn-choice" data-choice="a">Presó</button>
+            <button type="button" class="btn btn-choice" data-choice="b">Suspensió amb condicions</button>
+            <button type="button" class="btn btn-choice" data-choice="c">Reparació a la víctima</button>
           </div>
         </div>
         <div id="k1-answer" hidden class="answer sheet flex flex-col gap-3" style="border-color:var(--green)">
@@ -1140,14 +1233,14 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
           <p class="cite">Amb la reforma, encara que la pena se suspengui, l'antecedent per delicte menys greu consta durant anys (foli 03).</p>
         </div>
       </div>
-      <div data-panel="k2" hidden class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start">
+      <div data-panel="k2" hidden class="grid gap-5 items-start">
         <div class="sheet flex flex-col gap-3">
           <span class="tag tag-red self-start">Perfil d'alt risc</span>
           <p style="margin:0;font-size:var(--t-lg);line-height:1.3">34 anys. Una quarantena de detencions per furts al metro. Ven els terminals a una xarxa de receptació. Consum problemàtic de cocaïna.</p>
-          <div class="flex flex-wrap gap-3 mt-2" data-choice-group="k2">
-            <button type="button" class="btn" data-choice="a">Presó</button>
-            <button type="button" class="btn" data-choice="b">Supervisió intensiva i tractament</button>
-            <button type="button" class="btn" data-choice="c">Multa</button>
+          <div class="flex flex-wrap gap-4 mt-2" data-choice-group="k2">
+            <button type="button" class="btn btn-choice" data-choice="a">Presó</button>
+            <button type="button" class="btn btn-choice" data-choice="b">Supervisió intensiva i tractament</button>
+            <button type="button" class="btn btn-choice" data-choice="c">Multa</button>
           </div>
         </div>
         <div id="k2-answer" hidden class="answer sheet flex flex-col gap-3" style="border-color:var(--red)">
@@ -1156,13 +1249,13 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
           <p class="cite">Si no s'actua sobre la xarxa que adquireix els terminals, un altre n'ocuparà el lloc.</p>
         </div>
       </div>
-      <div data-panel="k3" hidden class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start">
+      <div data-panel="k3" hidden class="grid gap-5 items-start">
         <div class="sheet flex flex-col gap-3">
           <span class="tag tag-blue self-start">El mercat</span>
           <p style="margin:0;font-size:var(--t-lg);line-height:1.3">Un establiment de reparacions adquireix uns dos-cents mòbils robats al mes i en comercialitza les peces.</p>
-          <div class="flex flex-wrap gap-3 mt-2" data-choice-group="k3">
-            <button type="button" class="btn" data-choice="a">Agreujar encara més la pena del furt</button>
-            <button type="button" class="btn" data-choice="b">Investigar i tancar el local</button>
+          <div class="flex flex-wrap gap-4 mt-2" data-choice-group="k3">
+            <button type="button" class="btn btn-choice" data-choice="a">Agreujar encara més la pena del furt</button>
+            <button type="button" class="btn btn-choice" data-choice="b">Investigar i tancar el local</button>
           </div>
         </div>
         <div id="k3-answer" hidden class="answer sheet flex flex-col gap-3" style="border-color:var(--blue)">
@@ -1221,7 +1314,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     </div>
     <div class="step flex flex-wrap items-center gap-5" data-step="6">
       <p style="margin:0;font-size:var(--t-lg);font-weight:600">Qüestió final: la reforma reduirà el furt de telèfons mòbils?</p>
-      <a href="#cas" class="btn" data-goto="cas">Tornar a la votació inicial</a>
+      <a href="#cas" class="btn btn-ghost presenter-only" data-goto="cas">Votació inicial · foli 02</a>
     </div>
     <details class="refs">
       <summary>Referències</summary>
@@ -1302,6 +1395,7 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
   function reveal(el){
     el.classList.add('on');
     if (el.querySelector('#cells')) lightCells();
+    if (el.id === 'bars-real') fillBars();
   }
   function next(){
     const s = slides[current];
@@ -1373,13 +1467,14 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     const on = typeof force === 'boolean' ? force : !body.classList.contains('show-all');
     body.classList.toggle('show-all', on);
     $('#btn-all').setAttribute('aria-pressed', on);
-    if (on) lightCells();
+    if (on) { lightCells(); fillBars(); }
     updateStepCount();
   }
   function toggleNotes(force){
     const n = $('#notes');
     const on = typeof force === 'boolean' ? force : !n.classList.contains('open');
     n.classList.toggle('open', on);
+    body.classList.toggle('presenter', on);
     n.setAttribute('aria-hidden', !on);
     $('#btn-notes').setAttribute('aria-pressed', on);
     if (on) renderNotes();
@@ -1455,6 +1550,20 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
   $$('[data-goto]').forEach(a => a.addEventListener('click', e => {
     e.preventDefault(); go(slides.findIndex(s => s.id === a.dataset.goto));
   }));
+
+  /* ---------- Portada: telèfon ---------- */
+  const phone = $('#phone'), stage = $('#stage'), hang = $('#hang');
+  function setTilt(x, y){
+    phone.style.setProperty('--rx', (6 - y*10) + 'deg');
+    phone.style.setProperty('--ry', (-20 + x*16) + 'deg');
+  }
+  slides[0].addEventListener('pointermove', e => {
+    if (reduce || e.pointerType === 'touch') return;
+    const r = stage.getBoundingClientRect();
+    setTilt((e.clientX - r.left) / r.width - 0.5, (e.clientY - r.top) / r.height - 0.5);
+  });
+  slides[0].addEventListener('pointerleave', () => setTilt(0, 0));
+  hang.addEventListener('click', () => { hang.classList.toggle('on'); updateStepCount(); });
 
   /* ---------- Cas: slider ---------- */
   const valor = $('#valor');
@@ -1577,10 +1686,9 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     $('#guess-out').textContent = guess.value + ' %';
     $('#guess-bar').style.width = guess.value + '%';
   });
-  $('#reveal-bars').addEventListener('click', () => {
-    $$('#bars .val').forEach((v, i) => setTimeout(() => v.style.width = v.dataset.w + '%', reduce ? 0 : i*180));
-    $('#reveal-bars').classList.add('is-on');
-  });
+  function fillBars(){
+    $$('#bars-real .val').forEach((v, i) => setTimeout(() => v.style.width = v.dataset.w + '%', reduce ? 0 : 250 + i*180));
+  }
 
   /* ---------- Dot plot ---------- */
   const MIN = -10, MAX = 15;
@@ -1614,7 +1722,6 @@ details.refs li{font-size:var(--t-xs);line-height:1.45;margin:.4em 0;padding-lef
     const b = e.currentTarget;
     const on = b.getAttribute('aria-pressed') !== 'true';
     b.setAttribute('aria-pressed', on);
-    b.textContent = on ? 'Torna a «hospital»' : 'Canvia «hospital» per «presó»';
     $('#hosp').classList.toggle('prison-mode', on);
     $$('#hosp .swap').forEach((s, i) => {
       setTimeout(() => {
